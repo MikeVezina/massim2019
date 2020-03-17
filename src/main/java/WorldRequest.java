@@ -37,8 +37,12 @@ public class WorldRequest {
                         String carlCards)
     {
         try {
-            String pointedWorld = "w1" + aliceCards + "_2" + bobCards + "_3" + carlCards;
-            String json = Files.readString(Path.of("./a8model.json")).replace("${pointedWorld}", pointedWorld);
+            String pointedWorld = "w${alice}_" + aliceCards + "_${bob}_" + bobCards + "_${carl}_" + carlCards;
+            String json = Files.readString(Path.of("./a8model.json"));
+            json = json.replace("${pointedWorld}", pointedWorld);
+            json = json.replace("${alice}", "alice");
+            json = json.replace("${bob}", "bob");
+            json = json.replace("${carl}", "carl");
 //            System.out.println(json);
             sendModelRequest(json);
         } catch (IOException e) {

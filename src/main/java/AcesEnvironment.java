@@ -86,16 +86,16 @@ public class AcesEnvironment extends Environment {
 
         if(actualName.equals("Alice"))
         {
-            if(worldRequest.modelCheckFormula("(K a 1AA)"))
+            if(worldRequest.modelCheckFormula("(K alice alice_AA)"))
             {
                 percepts.add(ASSyntax.createLiteral("card(AA)"));
             }
-            if(worldRequest.modelCheckFormula("(K a 1EE)"))
+            if(worldRequest.modelCheckFormula("(K alice alice_EE)"))
             {
                 percepts.add(ASSyntax.createLiteral("card(EE)"));
             }
 
-            if(worldRequest.modelCheckFormula("(K a 1AE)"))
+            if(worldRequest.modelCheckFormula("(K alice alice_AE)"))
             {
                 percepts.add(ASSyntax.createLiteral("card(AE)"));
             }

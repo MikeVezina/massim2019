@@ -1,872 +1,872 @@
 {
   "name": "Aces and Eights",
   "propositions": [
-    "1AA",
-    "1AE",
-    "1EE",
-    "2AA",
-    "2AE",
-    "2EE",
-    "3AA",
-    "3AE",
-    "3EE"
+    "${alice}_AA",
+    "${alice}_AE",
+    "${alice}_EE",
+    "${bob}_AA",
+    "${bob}_AE",
+    "${bob}_EE",
+    "${carl}_AA",
+    "${carl}_AE",
+    "${carl}_EE"
   ],
   "actions": [
     {
       "description": "Alice does not know",
-      "formula": "(not((K a 1AA) or (K a 1AE) or (K a 1EE)))"
+      "formula": "(not((K ${alice} ${alice}_AA) or (K ${alice} ${alice}_AE) or (K ${alice} ${alice}_EE)))"
     },
     {
       "description": "Alice knows",
-      "formula": "((K a 1AA) or (K a 1AE) or (K a 1EE))"
+      "formula": "((K ${alice} ${alice}_AA) or (K ${alice} ${alice}_AE) or (K ${alice} ${alice}_EE))"
     },
     {
       "description": "Bob does not know",
-      "formula": "(not((K b 2AA) or (K b 2AE) or (K b 2EE)))"
+      "formula": "(not((K ${bob} ${bob}_AA) or (K ${bob} ${bob}_AE) or (K ${bob} ${bob}_EE)))"
     },
     {
       "description": "Bob knows",
-      "formula": "((K b 2AA) or (K b 2AE) or (K b 2EE))"
+      "formula": "((K ${bob} ${bob}_AA) or (K ${bob} ${bob}_AE) or (K ${bob} ${bob}_EE))"
     },
     {
       "description": "Carl does not know",
-      "formula": "(not((K c 3AA) or (K c 3AE) or (K c 3EE)))"
+      "formula": "(not((K ${carl} ${carl}_AA) or (K ${carl} ${carl}_AE) or (K ${carl} ${carl}_EE)))"
     },
     {
       "description": "Carl knows",
-      "formula": "((K c 3AA) or (K c 3AE) or (K c 3EE))"
+      "formula": "((K ${carl} ${carl}_AA) or (K ${carl} ${carl}_AE) or (K ${carl} ${carl}_EE))"
     }
   ],
   "epistemicModel": {
     "worlds": [
       {
-        "name": "w1AA_2AA_3EE",
+        "name": "w${alice}_AA_${bob}_AA_${carl}_EE",
         "props": [
-          "1AA",
-          "2AA",
-          "3EE"
+          "${alice}_AA",
+          "${bob}_AA",
+          "${carl}_EE"
         ]
       },
       {
-        "name": "w1AA_2AE_3AE",
+        "name": "w${alice}_AA_${bob}_AE_${carl}_AE",
         "props": [
-          "1AA",
-          "2AE",
-          "3AE"
+          "${alice}_AA",
+          "${bob}_AE",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1AA_2AE_3EE",
+        "name": "w${alice}_AA_${bob}_AE_${carl}_EE",
         "props": [
-          "1AA",
-          "2AE",
-          "3EE"
+          "${alice}_AA",
+          "${bob}_AE",
+          "${carl}_EE"
         ]
       },
       {
-        "name": "w1AA_2EE_3AA",
+        "name": "w${alice}_AA_${bob}_EE_${carl}_AA",
         "props": [
-          "1AA",
-          "2EE",
-          "3AA"
+          "${alice}_AA",
+          "${bob}_EE",
+          "${carl}_AA"
         ]
       },
       {
-        "name": "w1AA_2EE_3AE",
+        "name": "w${alice}_AA_${bob}_EE_${carl}_AE",
         "props": [
-          "1AA",
-          "2EE",
-          "3AE"
+          "${alice}_AA",
+          "${bob}_EE",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1AA_2EE_3EE",
+        "name": "w${alice}_AA_${bob}_EE_${carl}_EE",
         "props": [
-          "1AA",
-          "2EE",
-          "3EE"
+          "${alice}_AA",
+          "${bob}_EE",
+          "${carl}_EE"
         ]
       },
       {
-        "name": "w1AE_2AA_3AE",
+        "name": "w${alice}_AE_${bob}_AA_${carl}_AE",
         "props": [
-          "1AE",
-          "2AA",
-          "3AE"
+          "${alice}_AE",
+          "${bob}_AA",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1AE_2AA_3EE",
+        "name": "w${alice}_AE_${bob}_AA_${carl}_EE",
         "props": [
-          "1AE",
-          "2AA",
-          "3EE"
+          "${alice}_AE",
+          "${bob}_AA",
+          "${carl}_EE"
         ]
       },
       {
-        "name": "w1AE_2AE_3AA",
+        "name": "w${alice}_AE_${bob}_AE_${carl}_AA",
         "props": [
-          "1AE",
-          "2AE",
-          "3AA"
+          "${alice}_AE",
+          "${bob}_AE",
+          "${carl}_AA"
         ]
       },
       {
-        "name": "w1AE_2AE_3AE",
+        "name": "w${alice}_AE_${bob}_AE_${carl}_AE",
         "props": [
-          "1AE",
-          "2AE",
-          "3AE"
+          "${alice}_AE",
+          "${bob}_AE",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1AE_2AE_3EE",
+        "name": "w${alice}_AE_${bob}_AE_${carl}_EE",
         "props": [
-          "1AE",
-          "2AE",
-          "3EE"
+          "${alice}_AE",
+          "${bob}_AE",
+          "${carl}_EE"
         ]
       },
       {
-        "name": "w1AE_2EE_3AA",
+        "name": "w${alice}_AE_${bob}_EE_${carl}_AA",
         "props": [
-          "1AE",
-          "2EE",
-          "3AA"
+          "${alice}_AE",
+          "${bob}_EE",
+          "${carl}_AA"
         ]
       },
       {
-        "name": "w1AE_2EE_3AE",
+        "name": "w${alice}_AE_${bob}_EE_${carl}_AE",
         "props": [
-          "1AE",
-          "2EE",
-          "3AE"
+          "${alice}_AE",
+          "${bob}_EE",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1EE_2AA_3AA",
+        "name": "w${alice}_EE_${bob}_AA_${carl}_AA",
         "props": [
-          "1EE",
-          "2AA",
-          "3AA"
+          "${alice}_EE",
+          "${bob}_AA",
+          "${carl}_AA"
         ]
       },
       {
-        "name": "w1EE_2AA_3AE",
+        "name": "w${alice}_EE_${bob}_AA_${carl}_AE",
         "props": [
-          "1EE",
-          "2AA",
-          "3AE"
+          "${alice}_EE",
+          "${bob}_AA",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1EE_2AA_3EE",
+        "name": "w${alice}_EE_${bob}_AA_${carl}_EE",
         "props": [
-          "1EE",
-          "2AA",
-          "3EE"
+          "${alice}_EE",
+          "${bob}_AA",
+          "${carl}_EE"
         ]
       },
       {
-        "name": "w1EE_2AE_3AA",
+        "name": "w${alice}_EE_${bob}_AE_${carl}_AA",
         "props": [
-          "1EE",
-          "2AE",
-          "3AA"
+          "${alice}_EE",
+          "${bob}_AE",
+          "${carl}_AA"
         ]
       },
       {
-        "name": "w1EE_2AE_3AE",
+        "name": "w${alice}_EE_${bob}_AE_${carl}_AE",
         "props": [
-          "1EE",
-          "2AE",
-          "3AE"
+          "${alice}_EE",
+          "${bob}_AE",
+          "${carl}_AE"
         ]
       },
       {
-        "name": "w1EE_2EE_3AA",
+        "name": "w${alice}_EE_${bob}_EE_${carl}_AA",
         "props": [
-          "1EE",
-          "2EE",
-          "3AA"
+          "${alice}_EE",
+          "${bob}_EE",
+          "${carl}_AA"
         ]
       }
     ],
     "edges": [
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "a",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${alice}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "b",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${bob}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2AA_3EE",
-        "worldTwo": "w1AA_2AA_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2AE_3AE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AA_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2AE_3EE",
-        "worldTwo": "w1AA_2AE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3AA",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3AE",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2EE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2EE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AA_2EE_3EE",
-        "worldTwo": "w1AA_2EE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AA_${bob}_EE_${carl}_EE",
+        "worldTwo": "w${alice}_AA_${bob}_EE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AA_3AE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1AE_2AA_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AA_3EE",
-        "worldTwo": "w1AE_2AA_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3AA",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3AE",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AE_2AE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AE_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2AE_3EE",
-        "worldTwo": "w1AE_2AE_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_AE_${carl}_EE",
+        "worldTwo": "w${alice}_AE_${bob}_AE_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2EE_3AA",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AE_2EE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1AE_2EE_3AE",
-        "worldTwo": "w1AE_2EE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_AE_${bob}_EE_${carl}_AE",
+        "worldTwo": "w${alice}_AE_${bob}_EE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3AA",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3AE",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AA_3EE",
-        "worldTwo": "w1EE_2AA_3EE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AA_${carl}_EE",
+        "worldTwo": "w${alice}_EE_${bob}_AA_${carl}_EE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AE_3AA",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1EE_2AE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AA"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2AE_3AE",
-        "worldTwo": "w1EE_2AE_3AE"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_AE_${carl}_AE",
+        "worldTwo": "w${alice}_EE_${bob}_AE_${carl}_AE"
       },
       {
-        "agentName": "c",
-        "worldOne": "w1EE_2EE_3AA",
-        "worldTwo": "w1EE_2EE_3AA"
+        "agentName": "${carl}",
+        "worldOne": "w${alice}_EE_${bob}_EE_${carl}_AA",
+        "worldTwo": "w${alice}_EE_${bob}_EE_${carl}_AA"
       }
     ],
     "pointedWorld": "${pointedWorld}"
