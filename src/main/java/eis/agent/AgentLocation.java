@@ -9,6 +9,11 @@ import java.util.LinkedList;
 
 public class AgentLocation extends Percept {
 
+    public AgentLocation(Position p) {
+        this();
+        this.currentLocation = p;
+    }
+
     public String toJsonString() {
         return GsonInstance.getInstance().toJson(this.getCurrentLocation());
     }

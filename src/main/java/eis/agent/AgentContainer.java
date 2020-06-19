@@ -3,6 +3,7 @@ package eis.agent;
 import eis.EISAdapter;
 import eis.iilang.Identifier;
 import eis.iilang.Percept;
+import eis.watcher.SynchronizedPerceptWatcher;
 import map.AgentMap;
 import messages.MQSender;
 import messages.Message;
@@ -57,6 +58,10 @@ public class AgentContainer {
 
     public synchronized Position getCurrentLocation() {
         return agentLocation.getCurrentLocation();
+    }
+
+    public synchronized void setCurrentLocation(Position p) {
+        agentLocation = new AgentLocation(p);
     }
 
     public AgentMap getAgentMap() {
@@ -154,6 +159,12 @@ public class AgentContainer {
         } else {
             System.out.println(agentName + ": Step " + getCurrentStep() + " did not perform any movement. " + perceptContainer.getLastAction() + " + " + perceptContainer.getLastActionResult());
         }
+
+        var expected = SynchronizedPerceptWatcher.getInstance().relPos.get(this).get(this).getPosition();
+        if(!agentLocation.getCurrentLocation().equals(expected))
+        {
+            System.out.println("debugger");
+        }
     }
 
     public synchronized long getCurrentStep() {
@@ -177,6 +188,16 @@ public class AgentContainer {
     }
 
     public synchronized void attachBlock(Position position) {
+        // Check to see if any other agents attach the block
+        for(AuthenticatedAgent container : this.getAgentAuthentication().getAuthenticatedAgents())
+        {
+           Position translatedBlock = container.getAgentContainer().getAgentAuthentication().translateToAgent(this, position);
+           if(container.getAgentContainer().attachedBlocks.contains(translatedBlock))
+           {
+               System.out.println("Agent " + container.getAgentContainer().getAgentName() + " has already attached this block");
+           }
+        }
+
         attachedBlocks.add(position);
     }
 

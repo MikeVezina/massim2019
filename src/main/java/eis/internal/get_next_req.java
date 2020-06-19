@@ -27,19 +27,24 @@ public class get_next_req extends DefaultInternalAction {
 
         String taskName = ((Atom) args[0]).getFunctor();
         Queue<Requirement> remainingRequirements = agentContainer.getSharedPerceptContainer().getTaskMap().get(taskName).getPlannedRequirements();
-                Deque<Requirement> oldReq = agentContainer.getSharedPerceptContainer().getTaskMap().get(taskName).getPlannedRequirements();
+        Deque<Requirement> oldReq = agentContainer.getSharedPerceptContainer().getTaskMap().get(taskName).getPlannedRequirements();
 
 
-        // Remove any un-done reqs
+        // Only keep the requirements we currently have
         oldReq.removeIf(r -> !agentContainer.getAttachedPositions().contains(r.getPosition()));
 
-        for (Position percept : agentContainer.getAttachedPositions()) {
-            remainingRequirements.removeIf(req -> req.getPosition().equals(percept));
+        if (oldReq.size() != agentContainer.getAttachedPositions().size()) {
+            ts.getLogger().info("Somethings wrong here?");
         }
 
+        ts.getLogger().info("==== Find Next Req: " + taskName + " ====");
+        ts.getLogger().info("All Reqs: " + remainingRequirements);
+        ts.getLogger().info("Old Reqs: " + oldReq);
 
+        remainingRequirements.removeIf(oldReq::contains);
+        ts.getLogger().info("Remaining Reqs: " + remainingRequirements);
 
-        if(oldReq.isEmpty())
+        if (oldReq.isEmpty())
             return false;
 
         Requirement lastRemoved = oldReq.getLast();
@@ -50,6 +55,7 @@ public class get_next_req extends DefaultInternalAction {
             return un.unifies(args[2], ASSyntax.createAtom("done")) && lastRemovedUnifies;
 
         Requirement next = remainingRequirements.peek();
+        ts.getLogger().info("Next: " + next);
         return un.unifies(args[2], reqToStruct(next)) && lastRemovedUnifies;
     }
 

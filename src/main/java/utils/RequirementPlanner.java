@@ -55,11 +55,29 @@ public final class RequirementPlanner {
             while (requirementIterator.hasNext()) {
                 Requirement req = requirementIterator.next();
 
-                if (currentRequirement.getAttachableDirection(req).equals(NONE))
-                    continue;
+                if(currentRequirement == null || currentRequirement.getAttachableDirection(req) == null)
+                {
+                    System.out.println("DEBUG HERE");
+                }
 
-                if (!currentRequirement.attachRequirement(req))
-                    throw new RuntimeException("Failed to attach requirement: " + req);
+                if (!currentRequirement.getAttachableDirection(req).equals(NONE))
+                    if (!currentRequirement.attachRequirement(req))
+                        throw new RuntimeException("Failed to attach sequential requirement: " + req + " to " + currentRequirement);
+
+
+            }
+            // If the next requirement is null, the next block will be in a different direction from the previous req.
+            if(currentRequirement.getNextRequirement() == null)
+            {
+                var prev = currentRequirement.getPreviousRequirement();
+
+                for (Requirement req : requirementList) {
+                    if (!prev.getTransition(req).equals(NONE))
+                        currentRequirement.forceAttachRequirement(new AttachableRequirement(req), NONE);
+                }
+
+                if(currentRequirement.getNextRequirement() == null)
+                    throw new RuntimeException("Failed to create sorted requirements: " + requirementList + ", Current: " + currentRequirement);
             }
 
             currentRequirement = currentRequirement.getNextRequirement();

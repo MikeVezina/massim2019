@@ -15,8 +15,8 @@ MAS mAPC2018 {
 	//executionControl: jason.control.ExecutionControlGUI
 
 	agents:
-		agentA agentClass eis.functions.CustomAgent #5;
-		agentOffender agentClass eis.functions.CustomAgent #5;
+		agentA agentClass eis.functions.CustomAgent #3;
+		//agentOffender agentClass eis.functions.CustomAgent #5;
 	    operator;
 
 	aslSourcePath: "src/main/asl";

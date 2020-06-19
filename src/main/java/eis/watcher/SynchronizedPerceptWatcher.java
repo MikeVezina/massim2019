@@ -8,6 +8,8 @@ import eis.agent.AgentContainer;
 import eis.percepts.attachments.AttachmentBuilder;
 import eis.percepts.containers.InvalidPerceptCollectionException;
 import eis.percepts.containers.SharedPerceptContainer;
+import eis.percepts.things.Thing;
+import map.Position;
 import massim.eismassim.EnvironmentInterface;
 import messages.Message;
 import serializers.GsonInstance;
@@ -27,6 +29,8 @@ public class SynchronizedPerceptWatcher extends Thread {
 
     private static final Logger LOG = LoggerFactory.getLogger("PerceptWatcher");
     private static SynchronizedPerceptWatcher synchronizedPerceptWatcher;
+
+    public Map<AgentContainer, Map<AgentContainer, Thing>> relPos = new HashMap<>();
 
     // Contain the agent containers
     private ConcurrentMap<String, AgentContainer> agentContainers;
@@ -67,9 +71,8 @@ public class SynchronizedPerceptWatcher extends Thread {
         return synchronizedPerceptWatcher;
     }
 
-    private synchronized void setSharedPerceptContainer(SharedPerceptContainer sharedPerceptContainer)
-    {
-        if(this.sharedPerceptContainer == null || sharedPerceptContainer.getStep() > this.sharedPerceptContainer.getStep())
+    private synchronized void setSharedPerceptContainer(SharedPerceptContainer sharedPerceptContainer) {
+        if (this.sharedPerceptContainer == null || sharedPerceptContainer.getStep() > this.sharedPerceptContainer.getStep())
             this.sharedPerceptContainer = sharedPerceptContainer;
 
         notifyAll();
@@ -136,13 +139,58 @@ public class SynchronizedPerceptWatcher extends Thread {
                 synchronized (this) {
                     // Check for new perceptions & update the agents.
                     Stopwatch sw = Stopwatch.startTiming();
+                    var isFirst = relPos.isEmpty();
 
                     agentContainers.values().forEach(a -> {
+
+
+                        // DEBUGGING:
+
+                        Map<AgentContainer, Thing> pos = new HashMap<>();
+
+                        var iter = agentPerceptUpdates.get(a.getAgentName()).listIterator();
+                        while (iter.hasNext()) {
+
+
+                            var next = iter.next();
+                            if (next.getName().equals("thing")) {
+                                String name = "";
+
+                                switch ( next.getParameters().get(3).toProlog())
+                                {
+                                    case "agent-TRG1":
+                                        name = "agentA1";
+                                        break;
+                                    case "agent-TRG2":
+                                        name = "agentA2";
+                                        break;
+                                    case "agent-TRG3":
+                                        name = "agentA3";
+                                        break;
+                                }
+
+
+                                if (!name.isBlank())
+                                {
+                                    var cont = agentContainers.get(name);
+                                    var thing = Thing.ParseThing(next);
+                                    if(isFirst && cont.equals(a))
+                                    {
+                                        cont.setCurrentLocation(thing.getPosition());
+                                    }
+                                    pos.put(cont, thing);
+                                    iter.remove();
+                                }
+                            }
+                        }
+
+                        relPos.put(a, pos);
+
+
                         try {
                             a.updatePerceptions(agentPerceptUpdates.get(a.getAgentName()));
-                        } catch (InvalidPerceptCollectionException e)
-                        {
-                            if(e.isStartPercepts())
+                        } catch (InvalidPerceptCollectionException e) {
+                            if (e.isStartPercepts())
                                 return;
 
                             throw e;

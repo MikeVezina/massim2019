@@ -67,6 +67,13 @@ isBesideAbsolute(X, Y)
         !waitForDetach(SLAVE, REQ).
 
 +!waitForDetach(SLAVE, REQ)
+    :    not(slaveDetached[source(SLAVE)]) &
+            slaveDetachedNext[source(SLAVE)]
+    <-  .print("Slave detach on next step");
+         !performAction(skip);
+        !waitForDetach(SLAVE, REQ).
+
++!waitForDetach(SLAVE, REQ)
     :    not(slaveDetached[source(SLAVE)])
     <-  .print("Waiting for slave detach");
         .wait(50);
@@ -170,6 +177,7 @@ isBesideAbsolute(X, Y)
     <-  .send(MASTER, tell, slaveConnect(TASK, REQ));
         !prepareForConnect(MASTER);
         !connect(MASTER, X, Y);
+        .send(MASTER, tell, slaveDetachedNext);
         !detach(X, Y);
         .send(MASTER, tell, slaveDetached);
         !exploreForever.

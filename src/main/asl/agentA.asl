@@ -78,8 +78,18 @@ hasBeenStuck(STEP)
         ?percept::thing(X,Y,marker,DET);
         .print("Marker Percept: ", X, ", ", Y, ", ", DET).
 
++!dropAnyAttach
+    : percept::attached(X, Y) &
+      xyToDirection(X, Y, DIR)
+    <-  !detach(DIR);
+        !dropAnyAttach.
+
++!dropAnyAttach
+    <- .print("Attachments are cleared.").
+
 +percept::simStart
     <-  .df_register("collector");
+        !dropAnyAttach;
         !achieveTasks.
 
 +!stayForever

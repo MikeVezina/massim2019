@@ -88,6 +88,7 @@ public class EISAdapter extends Environment implements AgentListener {
     @Override
     public void handlePercept(String agent, Percept percept) {
         // We do not use notifications.
+//        System.out.println("");
     }
 
     public AgentContainer getAgentContainer(String agentName) {
