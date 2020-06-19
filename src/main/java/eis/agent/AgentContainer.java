@@ -191,7 +191,8 @@ public class AgentContainer {
         // Check to see if any other agents attach the block
         for(AuthenticatedAgent container : this.getAgentAuthentication().getAuthenticatedAgents())
         {
-           Position translatedBlock = container.getAgentContainer().getAgentAuthentication().translateToAgent(this, position);
+           Position translatedBlockRelative = container.getAgentContainer().getAgentAuthentication().translateToAgent(this, position);
+           Position translatedBlock = container.getAgentContainer().relativeToAbsoluteLocation(translatedBlockRelative);
            if(container.getAgentContainer().attachedBlocks.contains(translatedBlock))
            {
                System.out.println("Agent " + container.getAgentContainer().getAgentName() + " has already attached this block");
