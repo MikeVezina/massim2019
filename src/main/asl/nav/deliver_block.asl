@@ -82,8 +82,7 @@ isBesideAbsolute(X, Y)
 +!waitForDetach(SLAVE, REQ)
     :   slaveDetached[source(SLAVE)] &
         req(X, Y, BLOCK) = REQ
-    <-  .print("Slave ", SLAVE, " detached");
-        blockAttached(X, Y).
+    <-  .print("Slave ", SLAVE, " detached").
 
 
 +!deliverBlock(TASK, REQ)
@@ -114,7 +113,7 @@ isBesideAbsolute(X, Y)
 +!moveAndRotateBlock(BLOCK, DEST_X, DEST_Y) // DEST_X and DEST_Y are absolute coordinates for where the block needs to go
     :   hasBlockAttached(R_X, R_Y, BLOCK) & // Get the relative position of the block
         calculateRelativePosition(relative(D_RX, D_RY), absolute(DEST_X, DEST_Y)) & // Calculate the relative position of the destination
-        (D_RX \== R_X & D_RY \== R_Y) // If the block is currently NOT on the destination
+        (D_RX \== R_X | D_RY \== R_Y) // If the block is currently NOT on the destination
     <-  !rotateToDirection(R_X, R_Y, D_RX, D_RY);
         !moveAndRotateBlock(BLOCK, DEST_X, DEST_Y). // Move one space away from the cell
 
@@ -152,14 +151,15 @@ isBesideAbsolute(X, Y)
         A_X == X & A_Y == Y
     <-  .print("Block Delivered!").
 
-+!navigateBlock(req(_, _, BLOCK), X, Y)
-    :   getAttachedAbsolute(BLOCK, A_X, A_Y) &
-        (A_X \== X | A_Y \== Y) &
+
++!navigateBlock(req(_, _, BLOCK), X, Y) // Deliver BLOCK to X, Y absolute
+    :   getAttachedAbsolute(BLOCK, A_X, A_Y) & // Get Current Absolute of attached BLOCK
+        (A_X \== X | A_Y \== Y) & // Compare that the block coordinates do not match the destination
         isAtLocation(X, Y) &
         D_X = X - A_X &
         D_Y = Y - A_Y &
         xyToDirection(D_X, D_Y, DIR)
-    <-  .print("Delivering Block. I'm standing on it!");
+    <-  .print("Delivering Block. I'm standing next to the delivery destination!");
         !moveAndRotateBlock(BLOCK, X, Y);
         !navigateBlock(req(_, _, BLOCK), X, Y).
 

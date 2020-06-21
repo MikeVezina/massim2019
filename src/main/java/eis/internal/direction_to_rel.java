@@ -27,7 +27,7 @@ public class direction_to_rel extends DefaultInternalAction {
 			// Get the parameters
 			String direction = ((Atom) args[0]).getFunctor();
 
-			Position relLocation = Utils.DirectionToRelativeLocation(direction).getPosition();
+			Position relLocation = Utils.DirectionStringToDirection(direction).getPosition();
 			
 			// Create the result term
 			NumberTerm resultX = new NumberTermImpl(relLocation.getX());

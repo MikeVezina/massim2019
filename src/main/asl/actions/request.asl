@@ -10,4 +10,4 @@
 // that was attached. We also want to run the attach action, so that we can update our internal model
 +!handleActionResult(request, [DIR], success)
     <-  .print("Request Success. Attaching Self to block.");
-        !attach(DIR).
+        !attachBlockDirection(DIR).

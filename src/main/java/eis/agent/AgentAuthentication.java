@@ -90,6 +90,15 @@ public class AgentAuthentication {
         return position.subtract(authenticatedAgent.getTranslationValue());
     }
 
+    public synchronized Position translateFromAgent(AgentContainer agentContainer, Position position) {
+        AuthenticatedAgent authenticatedAgent = authenticatedAgentMap.get(agentContainer.getAgentName());
+
+        if (authenticatedAgent == null)
+            return position;
+
+        return authenticatedAgent.getTranslationValue().subtract(position);
+    }
+
     /**
      * Merges the full map from the other agent container. This is typically done
      * when two agents initially authenticate each other.

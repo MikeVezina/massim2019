@@ -84,13 +84,19 @@ hasBeenStuck(STEP)
     <-  !detach(DIR);
         !dropAnyAttach.
 
+-!dropAnyAttach
+    <- .print("Drop Attachments failed. Trying again."); !dropAnyAttach.
+
 +!dropAnyAttach
     <- .print("Attachments are cleared.").
 
++!startAgents
+    <-  !dropAnyAttach;
+        !achieveTasks.
+
 +percept::simStart
     <-  .df_register("collector");
-        !dropAnyAttach;
-        !achieveTasks.
+        !startAgents.
 
 +!stayForever
     <-  !performAction(skip);

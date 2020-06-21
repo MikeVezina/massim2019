@@ -81,7 +81,7 @@ isAttachedToCorrectSide(X, Y, BLOCK) :-
 
 // Block can not be dispensed. Attempt to find a dispenser and navigate to it.
 +?canDispenseBlock(BLOCK, DISPENSER)
-    :   not(hasDispenserPerception(dispenser(_, _,BLOCK)))
+    :   not(hasDispenserPerception(dispenser(_, _,BLOCK))) | not(hasDispenserPerception(DISPENSER))
     <-  .print("Cannot dispense block. No Dispenser Found after searching.");
         !searchForThing(dispenser, BLOCK);
         ?canDispenseBlock(BLOCK, DISPENSER).
@@ -99,6 +99,12 @@ isAttachedToCorrectSide(X, Y, BLOCK) :-
     <-  !rotate(ROT);
         !detachMovedBlock(BLOCK).
 
++!moveBlock(X, Y)
+    :   hasBlockAttached(X, Y, BLOCK) &
+        not(getRotation(ROT))
+    <-  !explore; // We cant rotate the block so let's move it.
+        !moveBlock(X, Y).
+
 +!detachMovedBlock(BLOCK)
     :   hasBlockAttached(X, Y, BLOCK) &
         xyToDirection(X, Y, DIR)
@@ -107,7 +113,7 @@ isAttachedToCorrectSide(X, Y, BLOCK) :-
 +!moveBlock(X, Y)
     :   not(hasBlockAttached(X, Y, _)) &
         xyToDirection(X, Y, DIR)
-    <-  !attach(DIR);
+    <-  !attachBlockDirection(DIR);
         !moveBlock(X, Y).
 
 

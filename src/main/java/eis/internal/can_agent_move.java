@@ -22,7 +22,7 @@ public class can_agent_move extends DefaultInternalAction {
 
         Literal dirLiteral = (Literal) args[0];
         String dirStr = dirLiteral.getFunctor();
-        Direction dir = Utils.DirectionToRelativeLocation(dirStr);
+        Direction dir = Utils.DirectionStringToDirection(dirStr);
 
         if(dir == null)
             throw new JasonException("Failed to get direction.");

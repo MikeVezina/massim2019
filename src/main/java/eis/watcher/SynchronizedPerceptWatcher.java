@@ -5,14 +5,11 @@ import eis.exceptions.PerceiveException;
 import eis.iilang.EnvironmentState;
 import eis.iilang.Percept;
 import eis.agent.AgentContainer;
-import eis.percepts.attachments.AttachmentBuilder;
 import eis.percepts.containers.InvalidPerceptCollectionException;
 import eis.percepts.containers.SharedPerceptContainer;
 import eis.percepts.things.Thing;
-import map.Position;
 import massim.eismassim.EnvironmentInterface;
 import messages.Message;
-import serializers.GsonInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.Stopwatch;
@@ -43,6 +40,13 @@ public class SynchronizedPerceptWatcher extends Thread {
 
         // Set the thread name
         setName("SynchronizedPerceptWatcherThread");
+        setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+                System.out.println("Uncaught.");
+            }
+        });
     }
 
     private synchronized void initializeAgentContainers() {
@@ -89,6 +93,11 @@ public class SynchronizedPerceptWatcher extends Thread {
                 exc.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void interrupt() {
+        super.interrupt();
     }
 
     /**
@@ -223,7 +232,9 @@ public class SynchronizedPerceptWatcher extends Thread {
                     throw e;
             }
 
+
         }
+        System.out.println("SynchronizedPerceptWatcher is finished execution.");
     }
 
     public synchronized SharedPerceptContainer getSharedPerceptContainer() {
@@ -236,5 +247,9 @@ public class SynchronizedPerceptWatcher extends Thread {
         }
 
         return sharedPerceptContainer;
+    }
+
+    public Collection<AgentContainer> getAgentContainers() {
+        return agentContainers.values();
     }
 }

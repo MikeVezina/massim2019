@@ -5,6 +5,7 @@ import eis.iilang.Identifier;
 import eis.iilang.Percept;
 import eis.watcher.SynchronizedPerceptWatcher;
 import map.AgentMap;
+import map.Direction;
 import messages.MQSender;
 import messages.Message;
 import map.MapPercept;
@@ -35,7 +36,12 @@ public class AgentContainer {
     private List<Literal> currentStepPercepts;
     private AgentPerceptContainer perceptContainer;
     private Set<Position> attachedBlocks;
+
+    private Map<Position, AgentContainer> sharedAttachments;
+
     private MQSender mqSender;
+    private Set<Position> removedAttachments;
+    private Set<Position> addedAttachments;
 
     public AgentContainer(String agentName) {
         this.agentName = agentName;
@@ -46,6 +52,10 @@ public class AgentContainer {
         this.attachmentBuilder = new AttachmentBuilder(this);
         this.agentAuthentication = new AgentAuthentication(this);
         this.agentMap = new AgentMap(this);
+        this.removedAttachments = new HashSet<>();
+        this.addedAttachments = new HashSet<>();
+
+        this.sharedAttachments = new HashMap<>();
     }
 
     public MQSender getMqSender() {
@@ -114,11 +124,61 @@ public class AgentContainer {
         // Update the location
         updateLocation();
 
+        updateAttachedBlocks();
+
         checkRotation();
     }
 
-    private synchronized void checkRotation()
-    {
+    /**
+     * Adds the successful attach (or connection) action block to our attached blocks.
+     */
+    private void updateAttachedBlocks() {
+
+        // Clear any previous shared or removed attachments.
+        removedAttachments.clear();
+        addedAttachments.clear();
+        sharedAttachments.clear();
+
+        if(!perceptContainer.getLastActionResult().equals("success"))
+            return;
+
+        boolean isAttach = getAgentPerceptContainer().getLastAction().equals("attach");
+        boolean isDetach = getAgentPerceptContainer().getLastAction().equals("detach");
+        boolean isConnect = getAgentPerceptContainer().getLastAction().equals("connect");
+        boolean isDisconnect = getAgentPerceptContainer().getLastAction().equals("disconnect");
+
+        if(isAttach || isDetach)
+        {
+            var directionParameterStr = perceptContainer.getLastActionParams().get(0).toProlog();
+            var direction = Utils.DirectionStringToDirection(directionParameterStr);
+
+            if(direction == null)
+                throw new RuntimeException("Attach last parameter is invalid: " + directionParameterStr);
+
+            if(isAttach)
+            {
+                checkNewSharedAttachments(direction.getPosition());
+                addedAttachments.add(direction.getPosition());
+            }
+            else
+                this.removedAttachments.add(direction.getPosition());
+        }
+
+        if(isConnect || isDisconnect)
+        {
+            var xString = perceptContainer.getLastActionParams().get(1).toProlog();
+            var yString = perceptContainer.getLastActionParams().get(2).toProlog();
+            var position = new Position(Integer.parseInt(xString), Integer.parseInt(yString));
+
+            if(isConnect)
+                this.addedAttachments.add(position);
+            else
+                this.removedAttachments.add(position);
+
+        }
+    }
+
+    private synchronized void checkRotation() {
         if (perceptContainer.getLastAction().equals(Actions.ROTATE) && perceptContainer.getLastActionResult().equals("success")) {
             String rotationLiteral = ((Identifier) perceptContainer.getLastActionParams().get(0)).getValue();
             System.out.println(agentName + ": Step " + getCurrentStep() + " performed rotation. " + perceptContainer.getLastAction() + " + " + perceptContainer.getLastActionResult());
@@ -128,19 +188,21 @@ public class AgentContainer {
         }
     }
 
+    /**
+     * This method allows us to check which attachments are still attached.
+     * This also adds any attachments we didn't previously know about (i.e. those locations
+     * with the attached perceptions with no surrounding connected entities)
+     */
     public synchronized void updateAttachments() {
         // attachmentBuilder.getAttachments must be run before clearing the attached blocks.
         // The builder has a dependency on the current agent's attached blocks.
         Set<Position> newAttachedPositions = attachmentBuilder.getAttachments();
 
         this.attachedBlocks.clear();
-
-
         this.attachedBlocks.addAll(newAttachedPositions);
     }
 
-    public synchronized Set<MapPercept> getAttachedPercepts()
-    {
+    public synchronized Set<MapPercept> getAttachedPercepts() {
         // Map attached blocks to absolute positions and then map to MapPercepts
         return attachedBlocks.stream().map(this::relativeToAbsoluteLocation).map(p -> agentMap.getMapPercept(p)).collect(Collectors.toSet());
     }
@@ -151,7 +213,7 @@ public class AgentContainer {
 
             System.out.println(agentName + ": Step " + getCurrentStep() + " performed movement. " + perceptContainer.getLastAction() + " + " + perceptContainer.getLastActionResult());
             try {
-                agentLocation.updateAgentLocation(Utils.DirectionToRelativeLocation(directionIdentifier));
+                agentLocation.updateAgentLocation(Utils.DirectionStringToDirection(directionIdentifier));
             } catch (NullPointerException n) {
                 System.out.println(agentName + " encountered movement error on step " + getCurrentStep());
                 throw n;
@@ -161,8 +223,7 @@ public class AgentContainer {
         }
 
         var expected = SynchronizedPerceptWatcher.getInstance().relPos.get(this).get(this).getPosition();
-        if(!agentLocation.getCurrentLocation().equals(expected))
-        {
+        if (!agentLocation.getCurrentLocation().equals(expected)) {
             System.out.println("debugger");
         }
     }
@@ -187,19 +248,27 @@ public class AgentContainer {
         return this.currentStepPercepts;
     }
 
-    public synchronized void attachBlock(Position position) {
-        // Check to see if any other agents attach the block
-        for(AuthenticatedAgent container : this.getAgentAuthentication().getAuthenticatedAgents())
-        {
-           Position translatedBlockRelative = container.getAgentContainer().getAgentAuthentication().translateToAgent(this, position);
-           Position translatedBlock = container.getAgentContainer().relativeToAbsoluteLocation(translatedBlockRelative);
-           if(container.getAgentContainer().attachedBlocks.contains(translatedBlock))
-           {
-               System.out.println("Agent " + container.getAgentContainer().getAgentName() + " has already attached this block");
-           }
-        }
+    private void checkNewSharedAttachments(Position position) {
 
-        attachedBlocks.add(position);
+        // Check to see if any other agents attach the block
+        for (AuthenticatedAgent auth : this.getAgentAuthentication().getAuthenticatedAgents()) {
+            var agentPosition = auth.getAgentContainer().agentLocation;
+
+            for (Position blockPosition : auth.getAgentContainer().attachedBlocks) {
+                Position absBlockPosition = this.getAgentAuthentication().translateToAgent(auth.getAgentContainer(), agentPosition.getCurrentLocation().add(blockPosition));
+                Position relBlock = this.absoluteToRelativeLocation(absBlockPosition);
+
+                if (position.equals(relBlock))
+                {
+                    System.out.println("Agent " + auth.getAgentContainer().getAgentName() + " has already attached this block");
+                    this.sharedAttachments.put(position, auth.getAgentContainer());
+                }
+            }
+        }
+    }
+
+    public Map<Position, AgentContainer> getSharedAttachments() {
+        return sharedAttachments;
     }
 
     public synchronized boolean hasAttachedPercepts() {
@@ -233,6 +302,7 @@ public class AgentContainer {
         if (position == null)
             return;
 
+        this.sharedAttachments.remove(position);
         attachedBlocks.remove(position);
     }
 
@@ -285,5 +355,13 @@ public class AgentContainer {
     @Override
     public String toString() {
         return "Container of " + agentName;
+    }
+
+    public Set<Position> getPreviouslyRemovedAttachments() {
+        return removedAttachments;
+    }
+
+    public Set<Position> getPreviouslyAddedAttachments() {
+        return addedAttachments;
     }
 }

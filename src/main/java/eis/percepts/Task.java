@@ -46,9 +46,12 @@ public class Task extends ParsedPercept {
         return new ArrayList<>(requirementList);
     }
 
+    /**
+     * @return A cloned queue of ordered/planned requirements
+     */
     public Deque<Requirement> getPlannedRequirements()
     {
-        return requirementList;
+        return new LinkedList<>(requirementList);
     }
 
     public boolean isExpired() {

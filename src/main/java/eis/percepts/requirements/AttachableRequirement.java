@@ -214,4 +214,8 @@ public class AttachableRequirement extends Requirement {
             cur = cur.getNextRequirement();
         }
     }
+
+    public void setPrevious(AttachableRequirement previous) {
+        this.previousRequirement = previous;
+    }
 }

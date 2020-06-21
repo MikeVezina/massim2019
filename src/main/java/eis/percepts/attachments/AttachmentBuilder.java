@@ -21,15 +21,18 @@ public class AttachmentBuilder {
         this.agentContainer = agentContainer;
     }
 
-    private List<Position> getAttachmentPerceptPositions()
+    private Set<Position> getAttachmentPerceptPositions()
     {
-        return agentContainer.getAgentPerceptContainer().getRawAttachments();
+        var attachments = new HashSet<>(agentContainer.getAgentPerceptContainer().getRawAttachments());
+        attachments.removeAll(agentContainer.getPreviouslyRemovedAttachments());
+        attachments.addAll(agentContainer.getPreviouslyAddedAttachments());
+        return attachments;
     }
 
 
     public Set<Position> getAttachments()
     {
-        List<Position> attachmentPositions = getAttachmentPerceptPositions();
+        Set<Position> attachmentPositions = getAttachmentPerceptPositions();
 
         // Handle no attachment perceptions
         if(attachmentPositions.isEmpty())
@@ -74,8 +77,9 @@ public class AttachmentBuilder {
 
         Thing attachedPercept = currentPercept.getAttachableThing();
 
-        if(attachedPercept == null)
-            throw new RuntimeException("Failed to find an appropriate attachable thing type.");
+        if(attachedPercept == null) {
+            System.out.println("Failed to find an appropriate attachable thing type.");
+        }
 
         Map<Direction, MapPercept> surroundingPercepts = agentContainer.getAgentMap().getSurroundingPercepts(currentPercept);
 
