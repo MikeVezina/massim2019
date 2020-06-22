@@ -1,7 +1,9 @@
 // Maybe make sure we aren't dropping any blocks on dispensers?
+@drop[breakpoint]
 +!dropOtherAttachments(BLOCK)
     :   eis.internal.get_attached_blocks(BLOCKS) &
         .member(attached(X, Y, block, O_BLOCK), BLOCKS) &
+        O_BLOCK \== BLOCK &
         xyToDirection(X, Y, DIR)
     <-  .print("Dropping: ",  X, Y, O_BLOCK);
         !moveOffGoal(BLOCK);
@@ -11,6 +13,7 @@
 +!moveOffGoal(BLOCK)
     :   eis.internal.get_attached_blocks(BLOCKS) &
         .member(attached(X, Y, block, O_BLOCK), BLOCKS) &
+        O_BLOCK \== BLOCK &
         xyToDirection(X, Y, DIR) &
         percept::goal(X, Y)
     <-  .print("Block on goal. Moving");

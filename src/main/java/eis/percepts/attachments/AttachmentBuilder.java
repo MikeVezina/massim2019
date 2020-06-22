@@ -1,6 +1,8 @@
 package eis.percepts.attachments;
 
 import eis.agent.AgentContainer;
+import eis.percepts.things.Block;
+import eis.percepts.things.Entity;
 import map.Direction;
 import map.MapPercept;
 import map.Position;
@@ -16,13 +18,11 @@ import java.util.*;
 public class AttachmentBuilder {
     private AgentContainer agentContainer;
 
-    public AttachmentBuilder(AgentContainer agentContainer)
-    {
+    public AttachmentBuilder(AgentContainer agentContainer) {
         this.agentContainer = agentContainer;
     }
 
-    private Set<Position> getAttachmentPerceptPositions()
-    {
+    private Set<Position> getAttachmentPerceptPositions() {
         var attachments = new HashSet<>(agentContainer.getAgentPerceptContainer().getRawAttachments());
         attachments.removeAll(agentContainer.getPreviouslyRemovedAttachments());
         attachments.addAll(agentContainer.getPreviouslyAddedAttachments());
@@ -30,12 +30,11 @@ public class AttachmentBuilder {
     }
 
 
-    public Set<Position> getAttachments()
-    {
+    public Set<Position> getAttachments() {
         Set<Position> attachmentPositions = getAttachmentPerceptPositions();
 
         // Handle no attachment perceptions
-        if(attachmentPositions.isEmpty())
+        if (attachmentPositions.isEmpty())
             return Set.of();
 
         // Iterate through all of our surrounding percepts and try to determine which ones are attached to us
@@ -43,41 +42,101 @@ public class AttachmentBuilder {
 
         Map<Position, AttachedThing> allAttachedChains = new HashMap<>();
 
-        for(var percept : surroundingPercepts.entrySet())
-        {
-            if(attachmentPositions.contains(percept.getKey().getPosition()))
-            {
+        for (var percept : surroundingPercepts.entrySet()) {
+            if (attachmentPositions.contains(percept.getKey().getPosition())) {
                 allAttachedChains.putAll(createAttachmentChain(percept.getKey().getPosition(), percept.getValue()));
             }
         }
         return Set.copyOf(allAttachedChains.keySet());
     }
 
-    private Map<Position, AttachedThing> createAttachmentChain(Position initialPerceptLocation, MapPercept initialPercept)
-    {
+    private Map<Position, AttachedThing> createAttachmentChain(Position initialPerceptLocation, MapPercept initialPercept) {
         Map<Position, AttachedThing> attachedChain = new HashMap<>();
         recursiveCreateAttachmentChain(attachedChain, initialPerceptLocation, initialPercept);
 
+        // We will not keep track of any attachments that are near another agent NOT connected to us
+        var attIterator = attachedChain.entrySet().iterator();
+        while (attIterator.hasNext()) {
+            var attachmentEntry = attIterator.next();
+
+            Position attachPosition = attachmentEntry.getKey();
+            AttachedThing attachThing = attachmentEntry.getValue();
+
+            // If the attachment was previously attached (last step) just skip to the next attachment
+            if (agentContainer.getAttachedPositions().contains(attachPosition) || isConnected(attachThing))
+                continue;
+
+            // Remove the attachment if we did not recently connect and the attachment is near another agent (Or is the other agent).
+            attIterator.remove();
+        }
+
+
         // We now want to iterate through all of the attached chain things to check if it is possible that some
-        // blocks are connected to other entities. If so, it is possible that the whole chain belongs to the other entity.
-        // In that case, we can only rely on previous knowledge of which blocks have been attached in the past.
-        if(attachedChain.values().stream().anyMatch(a -> !a.getConnectedEntities().stream().allMatch(e -> getAttachmentPerceptPositions().contains(agentContainer.absoluteToRelativeLocation(e.getPosition())))))
-            // Remove any entries that have not previously been attached to the agent.
-            attachedChain.entrySet().removeIf(e -> !agentContainer.getAttachedPositions().contains(e.getKey()));
+//        // blocks are connected to other entities. If so, it is possible that the whole chain belongs to the other entity.
+//        // In that case, we can only rely on previous knowledge of which blocks have been attached in the past.
+//        if(attachedChain.values().stream()
+//                .anyMatch(a -> !a.getConnectedEntities().stream()
+//                        .allMatch(e -> getAttachmentPerceptPositions().contains(agentContainer.absoluteToRelativeLocation(e.getPosition())))))
+//            // Remove any entries that have not previously been attached to the agent.
+//            attachedChain.entrySet().removeIf(e -> !agentContainer.getAttachedPositions().contains(e.getKey()));
 
         return attachedChain;
     }
 
-    private void recursiveCreateAttachmentChain(Map<Position, AttachedThing> currentChain, Position perceptLocation, MapPercept currentPercept)
-    {
+    /**
+     * Check if an attached entity or block are connected via a connected entity
+     * @param thing
+     * @return True if the entity was connected in the last step, or if the thing is connected via an entity that was recently connected
+     */
+    private boolean isConnected(AttachedThing thing) {
+
+        // Do not add entities
+        if (thing.getThing() instanceof Entity)
+            // Check if the entity was recently connected
+            return false; // return isEntityConnected((Entity) thing.getThing());
+
+        // Check connected entities
+        return thing.getConnectedEntities().isEmpty() || thing.getConnectedEntities().stream().anyMatch(this::isEntityConnected);
+    }
+
+    private boolean isEntityConnected(Entity thing) {
+
+        if(agentContainer.getRecentConnections().isEmpty())
+            return false;
+
+        // Check if absolute
+        boolean isThingAbsolute = isThingAbsolute(thing);
+
+        // Get the absolute position of the entity perception
+        var absPosition = isThingAbsolute ? thing.getPosition() : agentContainer.relativeToAbsoluteLocation(thing.getPosition());
+
+
+        // att pos = 1, -2
+        // Get the connected containers
+        for (var container : agentContainer.getRecentConnections().keySet()) {
+            var teamPosition = agentContainer.getAgentAuthentication().getAuthenticatedTeammatePositions().get(container);
+
+            if (absPosition.equals(teamPosition))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean isThingAbsolute(Entity thing) {
+        var percepts = agentContainer.getAgentMap().getCurrentPercepts();
+        return percepts.containsKey(thing.getPosition()) && percepts.get(thing.getPosition()).getThingList().contains(thing);
+    }
+
+    private void recursiveCreateAttachmentChain(Map<Position, AttachedThing> currentChain, Position perceptLocation, MapPercept currentPercept) {
         // Ensure we do not get any cycles. If we already have the current perception in our chain, don't track it twice
         // Also, do not check the current perception if it is not tagged as an attachment
-        if(currentChain.containsKey(perceptLocation) || !getAttachmentPerceptPositions().contains(perceptLocation))
+        if (currentChain.containsKey(perceptLocation) || !getAttachmentPerceptPositions().contains(perceptLocation))
             return;
 
         Thing attachedPercept = currentPercept.getAttachableThing();
 
-        if(attachedPercept == null) {
+        if (attachedPercept == null) {
             System.out.println("Failed to find an appropriate attachable thing type.");
         }
 
@@ -88,20 +147,19 @@ public class AttachmentBuilder {
         // Insert the current percept attached thing object
         currentChain.put(perceptLocation, attachedThing);
 
-        for(Map.Entry<Direction, MapPercept> perceptEntry : surroundingPercepts.entrySet())
-        {
+        for (Map.Entry<Direction, MapPercept> perceptEntry : surroundingPercepts.entrySet()) {
             Direction traversedDirection = perceptEntry.getKey();
             MapPercept traversedPercept = perceptEntry.getValue();
             Position nextPerceptLocation = perceptLocation.add(traversedDirection.getPosition());
 
-            recursiveCreateAttachmentChain(currentChain,nextPerceptLocation,traversedPercept);
+            recursiveCreateAttachmentChain(currentChain, nextPerceptLocation, traversedPercept);
 
             // Add any entities that may be connected.
             // As long as an entity is beside a connected block, it is possible for them to be connected.
             // The server does not provide us with any information about which blocks are attached to which agent, so we
             // have to do some further processing to see if it is our attached block or a block attached to another agent.
             // Also, make sure the percept is not the originating agent (aka relative perception position (0,0))
-            if(traversedPercept.hasEntity() && !nextPerceptLocation.equals(Position.ZERO))
+            if (traversedPercept.hasEntity() && !nextPerceptLocation.equals(Position.ZERO))
                 attachedThing.addConnectedEntity(traversedPercept.getEntity());
         }
     }

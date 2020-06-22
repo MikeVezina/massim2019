@@ -66,12 +66,19 @@ selfTaskAssignment(TASK, REQ)
 
 // We only want to catch plan failures when we are achieving a task.
 -!achieveTasks[error(E), error_msg(MSG), code(CODE), code_src(SRC), code_line(LINE)]
-    :   selfTaskAssignment(TASK, REQ)
+    :   selfTaskAssignment(TASK, REQ) & .current_intention(intention(_, Im))
         //&
 //        E \== no_applicable &
 //        E \== no_relevant &
 //        E \== internal_action
-    <-  .print("A Failure Occurred while achieving the current task. Re-attempting... with error: ", E);
+    <-  .print("A Failure Occurred while achieving the current task.");
+        .print("============");
+        .print("Error Type: ", E);
+        .print("Error Msg: ", MSG);
+        .print("Code: ", CODE);
+        .print("Code Src: ", SRC);
+        .print("Code Line: ", LINE);
+        .print("Intended Means: ", Im);
+        .print("============");
         .wait(100); // Sleep before re-attempting
-        .print(MSG);
-        !!achieveTasks.
+        !!achieveTasks. // Start in separate focus

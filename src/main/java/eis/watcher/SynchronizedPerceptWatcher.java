@@ -31,12 +31,18 @@ public class SynchronizedPerceptWatcher extends Thread {
 
     // Contain the agent containers
     private ConcurrentMap<String, AgentContainer> agentContainers;
+    private ConcurrentMap<String, AgentContainer> usernameContainerMap;
+
+
     private SharedPerceptContainer sharedPerceptContainer;
     private EnvironmentInterface environmentInterface;
 
     private SynchronizedPerceptWatcher(EnvironmentInterface environmentInterface) {
         this.environmentInterface = environmentInterface;
         agentContainers = new ConcurrentHashMap<>();
+        usernameContainerMap = new ConcurrentHashMap<>();
+
+
 
         // Set the thread name
         setName("SynchronizedPerceptWatcherThread");
@@ -49,13 +55,39 @@ public class SynchronizedPerceptWatcher extends Thread {
         });
     }
 
+    public AgentContainer getContainerByUsername(String username)
+    {
+        return usernameContainerMap.get(username);
+    }
+
     private synchronized void initializeAgentContainers() {
         if (environmentInterface.getAgents().isEmpty())
             throw new RuntimeException("The EnvironmentInterface has not registered any entities yet.");
 
-        for (String agentName : environmentInterface.getAgents())
+        for (String agentName : environmentInterface.getAgents()) {
             agentContainers.put(agentName, new AgentContainer(agentName));
+        }
 
+        // Hard code agent usernames (no way to get them via EI??)
+        createUser("agent-TRG1","agentA1");
+        createUser("agent-TRG2","agentA2");
+        createUser("agent-TRG3","agentA3");
+        createUser("agent-TRG4","agentA4");
+        createUser("agent-TRG5","agentA5");
+        createUser("agent-TRG6","agentA6");
+        createUser("agent-TRG7","agentA7");
+        createUser("agent-TRG8","agentA8");
+        createUser("agent-TRG9","agentA9");
+        createUser("agent-TRG10","agentA10");
+
+    }
+
+    private void createUser(String username, String agentName)
+    {
+        if(!agentContainers.containsKey(agentName))
+            return;
+
+        usernameContainerMap.put(username,agentContainers.get(agentName));
     }
 
     @Override

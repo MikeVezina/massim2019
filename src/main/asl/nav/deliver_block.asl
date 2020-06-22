@@ -70,8 +70,22 @@ isBesideAbsolute(X, Y)
     :    not(slaveDetached[source(SLAVE)]) &
             slaveDetachedNext[source(SLAVE)]
     <-  .print("Slave detach on next step");
-         !performAction(skip);
-        !waitForDetach(SLAVE, REQ).
+         //!performAction(skip);
+         !disconnect(SLAVE, REQ).
+//        !waitForDetach(SLAVE, REQ).
+
++!disconnect(Slave, req(ReqX, ReqY, _))
+    :   percept::teamAgent(SlaveX, SlaveY, Slave) &
+        percept::attached(SlaveX, SlaveY) // Is the slave agent attached to us?
+    <- !performAction(disconnect(ReqX, ReqY, SlaveX, SlaveY)).
+
++!disconnect(Slave, req(ReqX, ReqY, _))
+    :   percept::teamAgent(SlaveX, SlaveY, Slave) &
+        not(percept::attached(SlaveX, SlaveY)) // Is the slave agent attached to us?
+    <- .print("Agent ", Slave, " already detached!").
+
+@disconnect[breakpoint]
+-!disconnect(_, _) <- .print("failed to disconnect!."); .fail.
 
 +!waitForDetach(SLAVE, REQ)
     :    not(slaveDetached[source(SLAVE)])

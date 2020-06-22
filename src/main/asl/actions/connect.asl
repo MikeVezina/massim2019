@@ -27,7 +27,7 @@ failureMessage(failed, "The given positions are too far apart OR one agent is al
 
 // On successful attachment, we want to determine if there was more than one attachment
 // that was attached. We also want to run the attach action, so that we can update our internal model
-@handler[breakpoint]
+@handler
 +!handleActionResult(connect, [USERNAME, X, Y], success)
     :   getAgentUsername(AGENT, USERNAME)
     <-  .print("Connect Success.");

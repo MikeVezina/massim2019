@@ -1,6 +1,7 @@
 package eis;
 
 import eis.watcher.SynchronizedPerceptWatcher;
+import jason.infra.centralised.RunCentralisedMAS;
 import jason.runtime.RuntimeServices;
 import map.AgentMap;
 import map.MapPercept;
@@ -17,6 +18,9 @@ import utils.LiteralUtils;
 import map.Position;
 import utils.Utils;
 
+import javax.management.MBeanServer;
+import javax.management.MBeanServerBuilder;
+import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -44,7 +48,7 @@ public class EISAdapter extends Environment implements AgentListener {
 
 
     public EISAdapter() {
-        super(20);
+        super(10);
         singleton = this;
     }
 

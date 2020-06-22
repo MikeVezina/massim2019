@@ -42,6 +42,7 @@ public class AgentContainer {
     private MQSender mqSender;
     private Set<Position> removedAttachments;
     private Set<Position> addedAttachments;
+    private Map<AgentContainer, Position> addedConnection;
 
     public AgentContainer(String agentName) {
         this.agentName = agentName;
@@ -54,7 +55,7 @@ public class AgentContainer {
         this.agentMap = new AgentMap(this);
         this.removedAttachments = new HashSet<>();
         this.addedAttachments = new HashSet<>();
-
+        this.addedConnection = new HashMap<>();
         this.sharedAttachments = new HashMap<>();
     }
 
@@ -138,6 +139,7 @@ public class AgentContainer {
         removedAttachments.clear();
         addedAttachments.clear();
         sharedAttachments.clear();
+        addedConnection.clear();
 
         if(!perceptContainer.getLastActionResult().equals("success"))
             return;
@@ -164,18 +166,27 @@ public class AgentContainer {
                 this.removedAttachments.add(direction.getPosition());
         }
 
-        if(isConnect || isDisconnect)
+        if(isConnect)
         {
+            var usernameContainer = SynchronizedPerceptWatcher.getInstance().getContainerByUsername(perceptContainer.getLastActionParams().get(0).toProlog());
             var xString = perceptContainer.getLastActionParams().get(1).toProlog();
             var yString = perceptContainer.getLastActionParams().get(2).toProlog();
             var position = new Position(Integer.parseInt(xString), Integer.parseInt(yString));
 
-            if(isConnect)
-                this.addedAttachments.add(position);
-            else
-                this.removedAttachments.add(position);
+            this.addedConnection.put(usernameContainer, position);
 
         }
+
+        // Disconnect is used to disconnect an agent from a block. Params 2,3 is the entity being disconnected
+        if(isDisconnect)
+        {
+//            var xReqString = Integer.parseInt(perceptContainer.getLastActionParams().get(0).toProlog());
+//            var yReqString = Integer.parseInt(perceptContainer.getLastActionParams().get(1).toProlog());
+            var xAgent = Integer.parseInt(perceptContainer.getLastActionParams().get(2).toProlog());
+            var yAgent = Integer.parseInt(perceptContainer.getLastActionParams().get(3).toProlog());
+            this.removedAttachments.add(new Position(xAgent, yAgent));
+        }
+
     }
 
     private synchronized void checkRotation() {
@@ -363,5 +374,9 @@ public class AgentContainer {
 
     public Set<Position> getPreviouslyAddedAttachments() {
         return addedAttachments;
+    }
+
+    public Map<AgentContainer, Position> getRecentConnections() {
+        return addedConnection;
     }
 }
