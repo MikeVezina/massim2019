@@ -1,5 +1,19 @@
+
+
+// Check for duplicate blocks of the correct type (And drop one)
++!dropOtherAttachments(BLOCK)
+    :   eis.internal.get_attached_blocks(BLOCKS) &
+        .member(attached(X, Y, block, BLOCK), BLOCKS) &
+        .member(attached(X_O, Y_O, block, BLOCK), BLOCKS) & // find duplicate block
+        ((X \== X_O) | (Y \== Y_O)) &
+        xyToDirection(X, Y, DIR) &
+        xyToDirection(X_O, Y_O, DIR)
+    <-  .print("Dropping Duplicate: ",  X, Y, BLOCK);
+        !moveOffGoal(BLOCK);
+        !performAction(detach(DIR));
+        !dropOtherAttachments(BLOCK).
+
 // Maybe make sure we aren't dropping any blocks on dispensers?
-@drop[breakpoint]
 +!dropOtherAttachments(BLOCK)
     :   eis.internal.get_attached_blocks(BLOCKS) &
         .member(attached(X, Y, block, O_BLOCK), BLOCKS) &
@@ -9,6 +23,7 @@
         !moveOffGoal(BLOCK);
         !performAction(detach(DIR));
         !dropOtherAttachments(BLOCK).
+
 
 +!moveOffGoal(BLOCK)
     :   eis.internal.get_attached_blocks(BLOCKS) &

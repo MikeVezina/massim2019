@@ -57,6 +57,7 @@ generatePath(X, Y, FIRST, RESULT)
         generatePath(X, Y, DIR, FAIL) &
         FAIL \== success
     <-  .print("Failed to generate the path: ", FAIL);
+        !explore; // Try to explore
         .fail(navigateError(FAIL)).
 
 +!navigateToDestination(X, Y)

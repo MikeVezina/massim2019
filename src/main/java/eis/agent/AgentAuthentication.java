@@ -121,11 +121,21 @@ public class AgentAuthentication {
     public synchronized Map<AgentContainer, Position> getAuthenticatedTeammatePositions() {
         Map<AgentContainer, Position> teammatePositions = new HashMap<>();
 
+        for (var authenticatedAgent : getAuthenticatedAgentPositions().entrySet()) {
+            teammatePositions.put(authenticatedAgent.getKey().getAgentContainer(), authenticatedAgent.getValue());
+        }
+
+        return teammatePositions;
+    }
+
+    public synchronized Map<AuthenticatedAgent, Position> getAuthenticatedAgentPositions() {
+        Map<AuthenticatedAgent, Position> teammatePositions = new HashMap<>();
+
         for (AuthenticatedAgent authenticatedAgent : getAuthenticatedAgents()) {
             Position otherAgentLocation = authenticatedAgent.getAgentContainer().getCurrentLocation();
 
             Position translationValue = authenticatedAgent.getTranslationValue();
-            teammatePositions.put(authenticatedAgent.getAgentContainer(), otherAgentLocation.add(translationValue));
+            teammatePositions.put(authenticatedAgent, otherAgentLocation.add(translationValue));
         }
 
         return teammatePositions;
@@ -169,5 +179,16 @@ public class AgentAuthentication {
 
     public synchronized List<AuthenticatedAgent> getAuthenticatedAgents() {
         return new ArrayList<>(authenticatedAgentMap.values());
+    }
+
+    public AgentContainer findAgentByRelativePosition(int xAgent, int yAgent) {
+        Position absolute = this.selfAgentContainer.relativeToAbsoluteLocation(new Position(xAgent, yAgent));
+
+        for(var agentEntry : this.getAuthenticatedTeammatePositions().entrySet())
+        {
+            if(agentEntry.getValue().equals(absolute))
+                return agentEntry.getKey();
+        }
+        return null;
     }
 }

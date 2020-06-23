@@ -64,20 +64,23 @@ isBesideAbsolute(X, Y)
         (req(CON_X, CON_Y, _) = PREV_REQ)
     <-  .print("Attempting to connect.");
         !connect(SLAVE, CON_X, CON_Y);
-        !waitForDetach(SLAVE, REQ).
+        .print("Disconnecting Slave");
+        !disconnect(SLAVE, REQ).
 
-+!waitForDetach(SLAVE, REQ)
-    :    not(slaveDetached[source(SLAVE)]) &
-            slaveDetachedNext[source(SLAVE)]
-    <-  .print("Slave detach on next step");
-         //!performAction(skip);
-         !disconnect(SLAVE, REQ).
-//        !waitForDetach(SLAVE, REQ).
+//+!waitForDetach(SLAVE, REQ)
+//    :    not(slaveDetached[source(SLAVE)]) &
+//            slaveDetachedNext[source(SLAVE)]
+//    <-  .print("Slave detach on next step");
+//         //!performAction(skip);
+//         !disconnect(SLAVE, REQ).
+////        !waitForDetach(SLAVE, REQ).
 
-+!disconnect(Slave, req(ReqX, ReqY, _))
++!disconnect(Slave, req(ReqX, ReqY, Block))
     :   percept::teamAgent(SlaveX, SlaveY, Slave) &
         percept::attached(SlaveX, SlaveY) // Is the slave agent attached to us?
-    <- !performAction(disconnect(ReqX, ReqY, SlaveX, SlaveY)).
+    <- !performAction(disconnect(ReqX, ReqY, SlaveX, SlaveY));
+       ?percept::lastActionResult(success).
+//       .send(Slave, tell, reqDisconnected(req(ReqX, ReqY, Block))).
 
 +!disconnect(Slave, req(ReqX, ReqY, _))
     :   percept::teamAgent(SlaveX, SlaveY, Slave) &
@@ -87,16 +90,21 @@ isBesideAbsolute(X, Y)
 @disconnect[breakpoint]
 -!disconnect(_, _) <- .print("failed to disconnect!."); .fail.
 
-+!waitForDetach(SLAVE, REQ)
-    :    not(slaveDetached[source(SLAVE)])
-    <-  .print("Waiting for slave detach");
-        .wait(50);
-        !waitForDetach(SLAVE, REQ).
 
-+!waitForDetach(SLAVE, REQ)
-    :   slaveDetached[source(SLAVE)] &
-        req(X, Y, BLOCK) = REQ
-    <-  .print("Slave ", SLAVE, " detached").
+// Disconnect handler
++!handleActionResult(disconnect, PARAMS, success)
+    <-  .print("(Warning): No handler for successful Action: ", ACTION).
+
+//+!waitForDetach(SLAVE, REQ)
+//    :    not(slaveDetached[source(SLAVE)])
+//    <-  .print("Waiting for slave detach");
+//        .wait(50);
+//        !waitForDetach(SLAVE, REQ).
+//
+//+!waitForDetach(SLAVE, REQ)
+//    :   slaveDetached[source(SLAVE)] &
+//        req(X, Y, BLOCK) = REQ
+//    <-  .print("Slave ", SLAVE, " detached").
 
 
 +!deliverBlock(TASK, REQ)
@@ -191,10 +199,22 @@ isBesideAbsolute(X, Y)
     <-  .send(MASTER, tell, slaveConnect(TASK, REQ));
         !prepareForConnect(MASTER);
         !connect(MASTER, X, Y);
-        .send(MASTER, tell, slaveDetachedNext);
-        !detach(X, Y);
-        .send(MASTER, tell, slaveDetached);
+        !skipUntilDisconnect(REQ, MASTER);
         !exploreForever.
+
++!skipUntilDisconnect(req(R_X, R_Y, Block), Master)
+    :   hasBlockAttached(X, Y, Block)
+    <-  .print("Skipping until disconnect");
+        !performAction(skip);
+        !skipUntilDisconnect(req(R_X, R_Y, Block), Master).
+
++!skipUntilDisconnect(req(R_X, R_Y, Block), Master)
+    :   not(hasBlockAttached(X, Y, Block))
+    <- .print("Block disconnected?").
+
+-!skipUntilDisconnect(Req, Master)
+    <- .print("Failed to skip until disconnect?");
+        .fail.
 
 +!deliverBlock(TASK, REQ)
     :   not(isMasterReq(REQ)) &

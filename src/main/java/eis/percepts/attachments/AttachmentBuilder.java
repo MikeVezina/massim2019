@@ -1,7 +1,6 @@
 package eis.percepts.attachments;
 
 import eis.agent.AgentContainer;
-import eis.percepts.things.Block;
 import eis.percepts.things.Entity;
 import map.Direction;
 import map.MapPercept;
@@ -24,8 +23,8 @@ public class AttachmentBuilder {
 
     private Set<Position> getAttachmentPerceptPositions() {
         var attachments = new HashSet<>(agentContainer.getAgentPerceptContainer().getRawAttachments());
-        attachments.removeAll(agentContainer.getPreviouslyRemovedAttachments());
-        attachments.addAll(agentContainer.getPreviouslyAddedAttachments());
+//        attachments.removeAll(agentContainer.getPreviouslyRemovedAttachments());
+//        attachments.addAll(agentContainer.getPreviouslyAddedAttachments());
         return attachments;
     }
 
@@ -54,21 +53,53 @@ public class AttachmentBuilder {
         Map<Position, AttachedThing> attachedChain = new HashMap<>();
         recursiveCreateAttachmentChain(attachedChain, initialPerceptLocation, initialPercept);
 
-        // We will not keep track of any attachments that are near another agent NOT connected to us
-        var attIterator = attachedChain.entrySet().iterator();
-        while (attIterator.hasNext()) {
-            var attachmentEntry = attIterator.next();
+        // Checks if any blocks are connected to an entity
+        boolean hasConnectedEntity = attachedChain.values().stream()
+                .anyMatch(a -> !a.getConnectedEntities().stream()
+                        .allMatch(e -> getAttachmentPerceptPositions().contains(agentContainer.absoluteToRelativeLocation(e.getPosition()))));
 
-            Position attachPosition = attachmentEntry.getKey();
-            AttachedThing attachThing = attachmentEntry.getValue();
+        // Blocks are not connected to any entities but are attached (they must be ours)
+        if (!hasConnectedEntity)
+            return attachedChain;
 
-            // If the attachment was previously attached (last step) just skip to the next attachment
-            if (agentContainer.getAttachedPositions().contains(attachPosition) || isConnected(attachThing))
-                continue;
-
-            // Remove the attachment if we did not recently connect and the attachment is near another agent (Or is the other agent).
-            attIterator.remove();
+        // Remove any entries that have not previously been attached to the agent by a connection with another agent.
+        if (agentContainer.getRecentConnections().isEmpty())
+        {
+            attachedChain.entrySet().removeIf(a -> this.shouldRemoveFromChain(a.getKey(), a.getValue()));
+            return attachedChain;
         }
+
+
+        // Get all connected entities and check if we have connected with any of them
+        // If so, keep the chain
+        boolean hasValidConnectedEntity = attachedChain.values().stream()
+                .anyMatch(this::isConnected);
+
+        if(hasValidConnectedEntity)
+            return attachedChain;
+
+
+        // Remaining blocks are not connected
+        attachedChain.entrySet().removeIf(a -> this.shouldRemoveFromChain(a.getKey(), a.getValue()));
+        return attachedChain;
+
+
+        // We will not keep track of any attachments that are near another agent NOT connected to us
+//        var attIterator = attachedChain.entrySet().iterator();
+//        while (attIterator.hasNext()) {
+//            var attachmentEntry = attIterator.next();
+//
+//            Position attachPosition = attachmentEntry.getKey();
+//            AttachedThing attachThing = attachmentEntry.getValue();
+//
+//
+//            // If the attachment was previously attached (last step) just skip to the next attachment
+//            if (agentContainer.getAttachedPositions().contains(attachPosition) || isConnected(attachThing))
+//                continue;
+//
+//            // Remove the attachment if we did not recently connect and the attachment is near another agent (Or is the other agent).
+//            attIterator.remove();
+//        }
 
 
         // We now want to iterate through all of the attached chain things to check if it is possible that some
@@ -80,11 +111,17 @@ public class AttachmentBuilder {
 //            // Remove any entries that have not previously been attached to the agent.
 //            attachedChain.entrySet().removeIf(e -> !agentContainer.getAttachedPositions().contains(e.getKey()));
 
-        return attachedChain;
+
+    }
+
+    // Remove the block if we have just recently removed it and if we havent just attached it, or if it wasn't attached to us previously
+    private boolean shouldRemoveFromChain(Position position, AttachedThing thing) {
+        return (agentContainer.getPreviouslyRemovedAttachments().contains(position) && !agentContainer.getPreviouslyAddedAttachments().contains(position)) || !agentContainer.getAttachedPositions().contains(position);
     }
 
     /**
      * Check if an attached entity or block are connected via a connected entity
+     *
      * @param thing
      * @return True if the entity was connected in the last step, or if the thing is connected via an entity that was recently connected
      */
@@ -101,7 +138,7 @@ public class AttachmentBuilder {
 
     private boolean isEntityConnected(Entity thing) {
 
-        if(agentContainer.getRecentConnections().isEmpty())
+        if (agentContainer.getRecentConnections().isEmpty())
             return false;
 
         // Check if absolute

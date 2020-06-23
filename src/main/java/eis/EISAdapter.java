@@ -48,7 +48,7 @@ public class EISAdapter extends Environment implements AgentListener {
 
 
     public EISAdapter() {
-        super(10);
+        super(20);
         singleton = this;
     }
 
@@ -125,7 +125,10 @@ public class EISAdapter extends Environment implements AgentListener {
 
 
 
-
+        for(Position position : agentContainer.getAttachedPositions())
+        {
+            percepts.add(ASSyntax.createLiteral(PERCEPT_NAMESPACE_ATOM, "betterAttach", new NumberTermImpl(position.getX()), new NumberTermImpl(position.getY())));
+        }
 
         List<Literal> agentPercepts = agentContainer.getCurrentPerceptions();
 

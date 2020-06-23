@@ -125,9 +125,10 @@ public class AgentContainer {
         // Update the location
         updateLocation();
 
+        checkRotation();
+
         updateAttachedBlocks();
 
-        checkRotation();
     }
 
     /**
@@ -180,13 +181,36 @@ public class AgentContainer {
         // Disconnect is used to disconnect an agent from a block. Params 2,3 is the entity being disconnected
         if(isDisconnect)
         {
-//            var xReqString = Integer.parseInt(perceptContainer.getLastActionParams().get(0).toProlog());
-//            var yReqString = Integer.parseInt(perceptContainer.getLastActionParams().get(1).toProlog());
+            var xReqString = Integer.parseInt(perceptContainer.getLastActionParams().get(0).toProlog());
+            var yReqString = Integer.parseInt(perceptContainer.getLastActionParams().get(1).toProlog());
             var xAgent = Integer.parseInt(perceptContainer.getLastActionParams().get(2).toProlog());
             var yAgent = Integer.parseInt(perceptContainer.getLastActionParams().get(3).toProlog());
+
+            var agent = this.agentAuthentication.findAgentByRelativePosition(xAgent, yAgent);
+
+            if(agent == null)
+            {
+                throw new NullPointerException("What's going on here?");
+            }
+
+
+            var abs = this.relativeToAbsoluteLocation(new Position(xReqString, yReqString));
+            this.getAgentAuthentication().translateToAgent(agent, abs);
+            agent.setDisconnected(abs);
             this.removedAttachments.add(new Position(xAgent, yAgent));
+
         }
 
+    }
+
+    /**
+     * Called when another agent disconnects one of our shared connected blocks.
+     * Called during the disconnect action handler
+     * @param abs The absolute value of the block
+     */
+    private synchronized void setDisconnected(Position abs) {
+        var rel = absoluteToRelativeLocation(abs);
+        this.removedAttachments.add(rel);
     }
 
     private synchronized void checkRotation() {
@@ -259,13 +283,13 @@ public class AgentContainer {
         return this.currentStepPercepts;
     }
 
-    private void checkNewSharedAttachments(Position position) {
+    private synchronized void checkNewSharedAttachments(Position position) {
 
         // Check to see if any other agents attach the block
         for (AuthenticatedAgent auth : this.getAgentAuthentication().getAuthenticatedAgents()) {
-            var agentPosition = auth.getAgentContainer().agentLocation;
+            var agentPosition = auth.getAgentContainer().getAgentLocation();
 
-            for (Position blockPosition : auth.getAgentContainer().attachedBlocks) {
+            for (Position blockPosition : auth.getAgentContainer().getPreviouslyAddedAttachments()) {
                 Position absBlockPosition = this.getAgentAuthentication().translateToAgent(auth.getAgentContainer(), agentPosition.getCurrentLocation().add(blockPosition));
                 Position relBlock = this.absoluteToRelativeLocation(absBlockPosition);
 
@@ -278,7 +302,7 @@ public class AgentContainer {
         }
     }
 
-    public Map<Position, AgentContainer> getSharedAttachments() {
+    public synchronized Map<Position, AgentContainer> getSharedAttachments() {
         return sharedAttachments;
     }
 
@@ -368,15 +392,15 @@ public class AgentContainer {
         return "Container of " + agentName;
     }
 
-    public Set<Position> getPreviouslyRemovedAttachments() {
+    public synchronized Set<Position> getPreviouslyRemovedAttachments() {
         return removedAttachments;
     }
 
-    public Set<Position> getPreviouslyAddedAttachments() {
+    public synchronized Set<Position> getPreviouslyAddedAttachments() {
         return addedAttachments;
     }
 
-    public Map<AgentContainer, Position> getRecentConnections() {
+    public synchronized Map<AgentContainer, Position> getRecentConnections() {
         return addedConnection;
     }
 }

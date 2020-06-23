@@ -55,18 +55,9 @@ selfTaskAssignment(TASK, REQ)
         !obtainRequirement(REQ);
         !deliverBlock(TASK, REQ).
 
-//-!achieveTasks
-//    :   selfTaskAssignment(TASK, _)
-//    <-  .print("An Error Occured while achieving the task.");
-//        .broadcast(tell, resetTask(TASK));
-//        +resetTask(TASK).
 
-
-
-
-// We only want to catch plan failures when we are achieving a task.
 -!achieveTasks[error(E), error_msg(MSG), code(CODE), code_src(SRC), code_line(LINE)]
-    :   selfTaskAssignment(TASK, REQ) & .current_intention(intention(_, Im))
+    :   .current_intention(intention(_, Im))
         //&
 //        E \== no_applicable &
 //        E \== no_relevant &
