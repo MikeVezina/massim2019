@@ -1,7 +1,5 @@
-{ include("common.asl") }
+//{ include("common.asl") }
 
-//{ include("nav/nav_common.asl") }
-//{ include("internal_actions.asl") }
 
 /* Rules */
 hasDispenserPerception(dispenser(X, Y, BLOCK)) :-

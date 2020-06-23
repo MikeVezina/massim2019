@@ -65,7 +65,7 @@ public class AttachmentBuilder {
         // Remove any entries that have not previously been attached to the agent by a connection with another agent.
         if (agentContainer.getRecentConnections().isEmpty())
         {
-            attachedChain.entrySet().removeIf(a -> this.shouldRemoveFromChain(a.getKey(), a.getValue()));
+            attachedChain.entrySet().removeIf(a -> !this.shouldKeepInChain(a.getKey(), a.getValue()));
             return attachedChain;
         }
 
@@ -80,7 +80,7 @@ public class AttachmentBuilder {
 
 
         // Remaining blocks are not connected
-        attachedChain.entrySet().removeIf(a -> this.shouldRemoveFromChain(a.getKey(), a.getValue()));
+        attachedChain.entrySet().removeIf(a -> !this.shouldKeepInChain(a.getKey(), a.getValue()));
         return attachedChain;
 
 
@@ -114,9 +114,9 @@ public class AttachmentBuilder {
 
     }
 
-    // Remove the block if we have just recently removed it and if we havent just attached it, or if it wasn't attached to us previously
-    private boolean shouldRemoveFromChain(Position position, AttachedThing thing) {
-        return (agentContainer.getPreviouslyRemovedAttachments().contains(position) && !agentContainer.getPreviouslyAddedAttachments().contains(position)) || !agentContainer.getAttachedPositions().contains(position);
+    // Keeps any blocks that we just attached, or had attached in the previous step
+    private boolean shouldKeepInChain(Position position, AttachedThing thing) {
+        return agentContainer.getPreviouslyAddedAttachments().contains(position) || agentContainer.getAttachedPositions().contains(position);
     }
 
     /**

@@ -1,4 +1,3 @@
-{ include("reset.asl") }
 { include("common.asl") }
 { include("internal_actions.asl") }
 { include("actions/actions.asl") }

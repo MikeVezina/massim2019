@@ -1,4 +1,4 @@
-{ include("common.asl") }
+//{ include("common.asl") }
 
 hasCurrentDir(DIR)
     :- currentDir(DIR).

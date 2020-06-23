@@ -1,4 +1,4 @@
-{ include("common.asl") }
+//{ include("common.asl") }
 
 @thing_percept[atomic]
 +percept::thing(X, Y, entity, TEAM)

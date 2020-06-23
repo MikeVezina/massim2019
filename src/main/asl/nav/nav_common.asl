@@ -1,5 +1,5 @@
-{ include("common.asl") }
-{ include("internal_actions.asl") }
+//{ include("common.asl") }
+//{ include("internal_actions.asl") }
 
 
 /* Initial beliefs and rules */
