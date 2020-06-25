@@ -112,6 +112,9 @@ public class EISAdapter extends Environment implements AgentListener {
 
         clearPercepts(agName);
 
+        if(agName.equals("df"))
+            return percepts;
+
         // The operator should rely on it's own beliefs and internal actions.
         if (agName.equals("operator")) {
             percepts.add(ASSyntax.createLiteral("step", new NumberTermImpl(perceptWatcher.getSharedPerceptContainer().getStep())));
