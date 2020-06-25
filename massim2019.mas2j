@@ -15,7 +15,7 @@ MAS mAPC2019 {
 	//executionControl: jason.control.ExecutionControlGUI
 
 	agents:
-		agentA [mindinspector="web(cycle,html,history)"] agentClass eis.functions.CustomAgent #3;
+		agentA agentClass eis.functions.CustomAgent #3;
 		//agentOffender agentClass eis.functions.CustomAgent #5;
 	    operator;
 
