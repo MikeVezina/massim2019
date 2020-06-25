@@ -1,7 +1,5 @@
-{ include("common.asl") }
+//{ include("common.asl") }
 
-//{ include("nav/nav_common.asl") }
-//{ include("internal_actions.asl") }
 
 /* Rules */
 hasDispenserPerception(dispenser(X, Y, BLOCK)) :-
@@ -81,7 +79,7 @@ isAttachedToCorrectSide(X, Y, BLOCK) :-
 
 // Block can not be dispensed. Attempt to find a dispenser and navigate to it.
 +?canDispenseBlock(BLOCK, DISPENSER)
-    :   not(hasDispenserPerception(dispenser(_, _,BLOCK)))
+    :   not(hasDispenserPerception(dispenser(_, _,BLOCK))) | not(hasDispenserPerception(DISPENSER))
     <-  .print("Cannot dispense block. No Dispenser Found after searching.");
         !searchForThing(dispenser, BLOCK);
         ?canDispenseBlock(BLOCK, DISPENSER).
@@ -90,25 +88,39 @@ isAttachedToCorrectSide(X, Y, BLOCK) :-
     :   hasDispenserPerception(dispenser(_, _,BLOCK)) &
         hasBlockPerception(X, Y,_)
     <-  .print("Block is blocking Dispenser");
-        !moveBlock(X, Y);
+        !moveBlock(X, Y)[required(BLOCK)];
         ?canDispenseBlock(BLOCK, dispenser(X, Y, BLOCK)).
 
-+!moveBlock(X, Y)
++!moveBlock(X, Y)[required(NeedBlock)]
     :   hasBlockAttached(X, Y, BLOCK) &
+        NeedBlock == BLOCK // the moved block is the one we need
+    <-  !rotate(ROT);
+        !detachMovedBlock(BLOCK).
+
++!moveBlock(X, Y)[required(NeedBlock)]
+    :   hasBlockAttached(X, Y, BLOCK) &
+        NeedBlock \== BLOCK & // the moved block is not the one we need
         getRotation(ROT)
     <-  !rotate(ROT);
         !detachMovedBlock(BLOCK).
+
++!moveBlock(X, Y)[required(NeedBlock)]
+    :   hasBlockAttached(X, Y, BLOCK) &
+        NeedBlock \== BLOCK & // the moved block is not the one we need
+        not(getRotation(ROT))
+    <-  !explore; // We cant rotate the block so let's move it.
+        !moveBlock(X, Y)[required(NeedBlock)].
 
 +!detachMovedBlock(BLOCK)
     :   hasBlockAttached(X, Y, BLOCK) &
         xyToDirection(X, Y, DIR)
     <-  !detach(DIR).
 
-+!moveBlock(X, Y)
++!moveBlock(X, Y)[required(NeedBlock)]
     :   not(hasBlockAttached(X, Y, _)) &
         xyToDirection(X, Y, DIR)
-    <-  !attach(DIR);
-        !moveBlock(X, Y).
+    <-  !attachBlockDirection(DIR);
+        !moveBlock(X, Y)[required(NeedBlock)].
 
 
 

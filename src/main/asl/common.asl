@@ -43,13 +43,14 @@ hasThingPerception(X, Y, TYPE, DETAILS) :-
 	(TYPE == entity & (X \== 0 | Y \== 0))).
 
 /*** Rules for checking if block is attached ***/
+// This only checks if the thing is attached to us.
 hasAttached(X, Y, TYPE, DETAILS) :-
      eis.internal.get_attached_blocks(BLOCKS) &
      .member(ATT, BLOCKS) &
      (attached(X, Y, TYPE, DETAILS) = ATT).
 
 hasAttached(X, Y) :-
-   hasBlockAttached(X, Y, _, _).
+   hasAttached(X, Y, _, _).
 
 hasBlockingPerception(X, Y) :-
     hasThingPerception(X, Y, TYPE, _) &
@@ -67,8 +68,8 @@ calculateRelativePosition(relative(R_X, R_Y), absolute(A_X, A_Y)) :-
     not(.ground(R_Y)) &
     percept::location(L_X, L_Y) &
     (R_X = A_X - L_X) &
-    (R_Y = A_Y - L_Y) &
-    .print("Abs: ", A_X, ", ", A_Y, ". Rel:", R_X, ", ", R_Y).
+    (R_Y = A_Y - L_Y).
+     //&    .print("Abs: ", A_X, ", ", A_Y, ". Rel:", R_X, ", ", R_Y).
 
 hasGoalPerception(X, Y) :-
     percept::goal(X, Y).

@@ -19,13 +19,13 @@ public class Task extends ParsedPercept {
     private boolean isCompleted;
 
     private Literal taskLiteral;
-    private List<Requirement> requirementList;
+    private final Deque<Requirement> requirementList;
 
     private Task(String name, int deadline, int reward, List<Requirement> requirements) {
         this.name = name;
         this.deadline = deadline;
         this.reward = reward;
-        this.requirementList = requirements;
+        this.requirementList = RequirementPlanner.SortRequirements(requirements);
         this.isExpired = false;
         this.isCompleted = false;
     }
@@ -43,13 +43,15 @@ public class Task extends ParsedPercept {
     }
 
     public List<Requirement> getRequirementList() {
-        return requirementList;
+        return new ArrayList<>(requirementList);
     }
 
+    /**
+     * @return A cloned queue of ordered/planned requirements
+     */
     public Deque<Requirement> getPlannedRequirements()
     {
-        return RequirementPlanner.SortRequirements(requirementList);
-
+        return new LinkedList<>(requirementList);
     }
 
     public boolean isExpired() {

@@ -82,9 +82,14 @@ public class AttachableRequirement extends Requirement {
         if (!requirement.setPreviousRequirement(this))
             return false;
 
-        this.nextRequirement = requirement;
-        this.nextRequirementDirection = transition;
+        forceAttachRequirement(requirement, transition);
         return true;
+    }
+
+    public void forceAttachRequirement(AttachableRequirement requirement, Direction direction)
+    {
+        this.nextRequirement = requirement;
+        this.nextRequirementDirection = direction;
     }
 
     public boolean isHeadRequirement() {
@@ -125,7 +130,7 @@ public class AttachableRequirement extends Requirement {
         return false;
     }
 
-    private Direction getTransition(Requirement requirement) {
+    public Direction getTransition(Requirement requirement) {
         Position transition = requirement.getPosition().subtract(this.getPosition());
         return Direction.GetDirection(transition);
     }
@@ -208,5 +213,9 @@ public class AttachableRequirement extends Requirement {
             System.out.println(cur.getNextRequirementDirection());
             cur = cur.getNextRequirement();
         }
+    }
+
+    public void setPrevious(AttachableRequirement previous) {
+        this.previousRequirement = previous;
     }
 }

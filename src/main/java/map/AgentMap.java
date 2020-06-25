@@ -1,11 +1,14 @@
 package map;
 
 import eis.agent.AgentContainer;
+import eis.agent.AuthenticatedAgent;
 import eis.percepts.terrain.ForbiddenCell;
 import eis.percepts.terrain.FreeSpace;
 import eis.percepts.terrain.Goal;
 import eis.percepts.terrain.Terrain;
+import eis.percepts.things.Entity;
 import eis.percepts.things.Thing;
+import eis.watcher.SynchronizedPerceptWatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.*;
@@ -68,6 +71,13 @@ public class AgentMap {
         // Clear list for new percepts.
         currentPerceptions.clear();
         currentStepChunks.clear();
+
+
+        // TODO Remove this. This is to debug auth positions.
+        for (AuthenticatedAgent authenticatedAgent : this.agentContainer.getAgentAuthentication().getAuthenticatedAgents()) {
+
+        }
+
 
         int vision = agentContainer.getSharedPerceptContainer().getVision();
         long currentStep = agentContainer.getSharedPerceptContainer().getStep();

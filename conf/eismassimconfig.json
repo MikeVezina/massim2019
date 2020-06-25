@@ -1,6 +1,6 @@
 {
   "scenario": "assemble2019",
-  "host": "agentcontest2.in.tu-clausthal.de",
+  "host": "localhost",
   "port": 12300,
   "scheduling": true,
   "timeout": 140000,
@@ -12,11 +12,6 @@
     {"name": "agentA2", "print-json": false, "print-iilang": false, "username": "agent-TRG2", "password": "ml7Dw2"},
     {"name": "agentA3", "print-json": false, "print-iilang": false, "username": "agent-TRG3", "password": "ml7Dw2"},
     {"name": "agentA4", "print-json": false, "print-iilang": false, "username": "agent-TRG4", "password": "ml7Dw2"},
-    {"name": "agentA5", "print-json": false, "print-iilang": false, "username": "agent-TRG5", "password": "ml7Dw2"},
-    {"name": "agentOffender1", "print-json": false, "print-iilang": false, "username": "agent-TRG6", "password": "ml7Dw2"},
-    {"name": "agentOffender2", "print-json": false, "print-iilang": false, "username": "agent-TRG7", "password": "ml7Dw2"},
-    {"name": "agentOffender3", "print-json": false, "print-iilang": false, "username": "agent-TRG8", "password": "ml7Dw2"},
-    {"name": "agentOffender4", "print-json": false, "print-iilang": false, "username": "agent-TRG9", "password": "ml7Dw2"},
-    {"name": "agentOffender5", "print-json": false, "print-iilang": false, "username": "agent-TRG10", "password": "ml7Dw2"}
+    {"name": "agentA5", "print-json": false, "print-iilang": false, "username": "agent-TRG5", "password": "ml7Dw2"}
   ]
 }

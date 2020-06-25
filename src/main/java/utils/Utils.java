@@ -42,7 +42,7 @@ public class Utils {
         return RelativeLocationToDirection(location.getX(), location.getY());
     }
 
-    public static Direction DirectionToRelativeLocation(String direction) {
+    public static Direction DirectionStringToDirection(String direction) {
 
         if (direction.equalsIgnoreCase(Direction.WEST.getAtom().getFunctor()))
             return Direction.WEST;

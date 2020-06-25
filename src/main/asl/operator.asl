@@ -1,4 +1,3 @@
-{ include("reset.asl") }
 { include("operator/common.asl") }
 { include("operator/tasks.asl") }
 { include("auth/auth.asl") }
@@ -17,12 +16,6 @@ A few things that the operator should keep track of:
         !processFriendlies(CUR_STEP);
         !refreshTaskAssignments;
         !assignTasks.
-
-
-+requireReset
-    <-  .print("Broadcasting a reset.");
-        .broadcast(tell, requireReset).
-
 
 /** OLD **/
 

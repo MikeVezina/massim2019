@@ -5,12 +5,11 @@ import eis.exceptions.PerceiveException;
 import eis.iilang.EnvironmentState;
 import eis.iilang.Percept;
 import eis.agent.AgentContainer;
-import eis.percepts.attachments.AttachmentBuilder;
 import eis.percepts.containers.InvalidPerceptCollectionException;
 import eis.percepts.containers.SharedPerceptContainer;
+import eis.percepts.things.Thing;
 import massim.eismassim.EnvironmentInterface;
 import messages.Message;
-import serializers.GsonInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import utils.Stopwatch;
@@ -28,26 +27,65 @@ public class SynchronizedPerceptWatcher extends Thread {
     private static final Logger LOG = LoggerFactory.getLogger("PerceptWatcher");
     private static SynchronizedPerceptWatcher synchronizedPerceptWatcher;
 
+    public Map<AgentContainer, Map<AgentContainer, Thing>> relPos = new HashMap<>();
+
     // Contain the agent containers
     private ConcurrentMap<String, AgentContainer> agentContainers;
+    private ConcurrentMap<String, AgentContainer> usernameContainerMap;
+
+
     private SharedPerceptContainer sharedPerceptContainer;
     private EnvironmentInterface environmentInterface;
 
     private SynchronizedPerceptWatcher(EnvironmentInterface environmentInterface) {
         this.environmentInterface = environmentInterface;
         agentContainers = new ConcurrentHashMap<>();
+        usernameContainerMap = new ConcurrentHashMap<>();
+
 
         // Set the thread name
         setName("SynchronizedPerceptWatcherThread");
+        setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread t, Throwable e) {
+                e.printStackTrace();
+                System.out.println("Uncaught.");
+                t.start();
+            }
+        });
+    }
+
+    public AgentContainer getContainerByUsername(String username) {
+        return usernameContainerMap.get(username);
     }
 
     private synchronized void initializeAgentContainers() {
         if (environmentInterface.getAgents().isEmpty())
             throw new RuntimeException("The EnvironmentInterface has not registered any entities yet.");
 
-        for (String agentName : environmentInterface.getAgents())
+        for (String agentName : environmentInterface.getAgents()) {
             agentContainers.put(agentName, new AgentContainer(agentName));
+        }
 
+        // Hard code agent usernames (no way to get them via EI??)
+        createUser("agent-TRG1", "agentA1");
+        createUser("agent-TRG2", "agentA2");
+        createUser("agent-TRG3", "agentA3");
+        createUser("agent-TRG4", "agentA4");
+        createUser("agent-TRG5", "agentA5");
+        createUser("agent-TRG6", "agentOffender1");
+        createUser("agent-TRG7", "agentOffender2");
+        createUser("agent-TRG8", "agentOffender3");
+        createUser("agent-TRG9", "agentOffender4");
+        createUser("agent-TRG10", "agentOffender5");
+
+    }
+
+    private void createUser(String username, String agentName) {
+        if (!agentContainers.containsKey(agentName))
+            return;
+
+        usernameContainerMap.put(username, agentContainers.get(agentName));
     }
 
     @Override
@@ -67,9 +105,8 @@ public class SynchronizedPerceptWatcher extends Thread {
         return synchronizedPerceptWatcher;
     }
 
-    private synchronized void setSharedPerceptContainer(SharedPerceptContainer sharedPerceptContainer)
-    {
-        if(this.sharedPerceptContainer == null || sharedPerceptContainer.getStep() > this.sharedPerceptContainer.getStep())
+    private synchronized void setSharedPerceptContainer(SharedPerceptContainer sharedPerceptContainer) {
+        if (this.sharedPerceptContainer == null || sharedPerceptContainer.getStep() > this.sharedPerceptContainer.getStep())
             this.sharedPerceptContainer = sharedPerceptContainer;
 
         notifyAll();
@@ -86,6 +123,11 @@ public class SynchronizedPerceptWatcher extends Thread {
                 exc.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void interrupt() {
+        super.interrupt();
     }
 
     /**
@@ -136,13 +178,43 @@ public class SynchronizedPerceptWatcher extends Thread {
                 synchronized (this) {
                     // Check for new perceptions & update the agents.
                     Stopwatch sw = Stopwatch.startTiming();
+                    var isFirst = relPos.isEmpty();
 
                     agentContainers.values().forEach(a -> {
+
+
+                        // DEBUGGING:
+
+                        Map<AgentContainer, Thing> pos = new HashMap<>();
+
+                        var iter = agentPerceptUpdates.get(a.getAgentName()).listIterator();
+                        while (iter.hasNext()) {
+
+
+                            var next = iter.next();
+                            if (next.getName().equals("thing")) {
+                                String username = next.getParameters().get(3).toProlog();
+
+                                if (usernameContainerMap.containsKey(username)) {
+                                    var cont = usernameContainerMap.get(username);
+                                    var thing = Thing.ParseThing(next);
+                                    if (isFirst && cont.equals(a)) {
+                                        cont.setCurrentLocation(thing.getPosition());
+                                    }
+                                    pos.put(cont, thing);
+                                    iter.remove();
+                                }
+                            }
+                        }
+
+                        if(!pos.isEmpty())
+                            relPos.put(a, pos);
+
+
                         try {
                             a.updatePerceptions(agentPerceptUpdates.get(a.getAgentName()));
-                        } catch (InvalidPerceptCollectionException e)
-                        {
-                            if(e.isStartPercepts())
+                        } catch (InvalidPerceptCollectionException e) {
+                            if (e.isStartPercepts())
                                 return;
 
                             throw e;
@@ -175,7 +247,9 @@ public class SynchronizedPerceptWatcher extends Thread {
                     throw e;
             }
 
+
         }
+        System.out.println("SynchronizedPerceptWatcher is finished execution.");
     }
 
     public synchronized SharedPerceptContainer getSharedPerceptContainer() {
@@ -188,5 +262,9 @@ public class SynchronizedPerceptWatcher extends Thread {
         }
 
         return sharedPerceptContainer;
+    }
+
+    public Collection<AgentContainer> getAgentContainers() {
+        return agentContainers.values();
     }
 }

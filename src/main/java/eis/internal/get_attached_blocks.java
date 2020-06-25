@@ -15,6 +15,13 @@ public class get_attached_blocks extends DefaultInternalAction {
     private static final long serialVersionUID = -6214881485708125130L;
     private static final String CLASS_NAME = get_attached_blocks.class.getName();
 
+    /**
+     * This internal action returns the attachments currently attached to us.
+     * @param ts
+     * @param un
+     * @param args
+     * @return
+     */
     @Override
     public Object execute(TransitionSystem ts, Unifier un, Term[] args) {
         AgentContainer agentContainer = EISAdapter.getSingleton().getAgentContainer(ts.getUserAgArch().getAgName());

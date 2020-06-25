@@ -22,7 +22,7 @@ public class are_attachments_blocked extends DefaultInternalAction {
 
         Literal dirLiteral = (Literal) args[0];
         String dirStr = dirLiteral.getFunctor();
-        Direction dir = Utils.DirectionToRelativeLocation(dirStr);
+        Direction dir = Utils.DirectionStringToDirection(dirStr);
 
         if(dir == null)
             throw new JasonException("Failed to get direction.");

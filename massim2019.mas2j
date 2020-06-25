@@ -6,7 +6,7 @@
  * https://multiagentcontest.org/
  */
 
-MAS mAPC2018 {
+MAS mAPC2019 {
 
     infrastructure: Centralised
 	
@@ -16,7 +16,7 @@ MAS mAPC2018 {
 
 	agents:
 		agentA agentClass eis.functions.CustomAgent #5;
-		agentOffender agentClass eis.functions.CustomAgent #5;
+		//agentOffender[startWebMindInspector=false] agentClass eis.functions.CustomAgent #5;
 	    operator;
 
 	aslSourcePath: "src/main/asl";

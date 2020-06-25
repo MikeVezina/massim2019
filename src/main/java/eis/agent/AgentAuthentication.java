@@ -1,5 +1,7 @@
 package eis.agent;
 
+import eis.percepts.things.Entity;
+import eis.watcher.SynchronizedPerceptWatcher;
 import messages.Message;
 import map.MapPercept;
 import map.Position;
@@ -39,13 +41,23 @@ public class AgentAuthentication {
 
         // Debugging stuff
         List<Position> translations = new ArrayList<>();
-        for(AuthenticatedAgent authenticatedAgent : authenticatedAgentMap.values())
-        {
-            if(translations.contains(authenticatedAgent.getTranslationValue()))
-                throw new NullPointerException("Failed to authenticate " + otherAgentContainer);
+        for (AuthenticatedAgent authenticatedAgent : authenticatedAgentMap.values()) {
+            if (translations.contains(authenticatedAgent.getTranslationValue()) || authenticatedAgent.getTranslationValue().equals(translation)) {
+//                throw new NullPointerException("Failed to authenticate " + otherAgentContainer);
+            }
             translations.add(authenticatedAgent.getTranslationValue());
-        }
 
+        }
+        var relPositions = selfAgentContainer.getDebuggingLocations();
+        if (relPositions != null) {
+            relPositions.forEach((agent, thing) -> {
+                if (thing instanceof Entity) {
+                    if (otherAgentContainer.getAgentName().equals(agent.getAgentName()) && !translation.equals(thing.getPosition().negate())) {
+                          System.out.println("Invalid auth. translation value!");
+                    }
+                }
+            });
+        }
         String agentName = otherAgentContainer.getAgentName();
         authenticatedAgentMap.put(agentName, new AuthenticatedAgent(otherAgentContainer, translation));
 
@@ -62,7 +74,7 @@ public class AgentAuthentication {
                     authenticatedAgentMap.put(authAgent.getAgentContainer().getAgentName(), new AuthenticatedAgent(authAgent.getAgentContainer(), calculatedTranslation));
 
                     // Add our translation value if the other agent doesn't have it
-                    if(authAgent.getAgentContainer().getAgentAuthentication().canAuthenticate(selfAgentContainer))
+                    if (authAgent.getAgentContainer().getAgentAuthentication().canAuthenticate(selfAgentContainer))
                         authAgent.getAgentContainer().getAgentAuthentication().authenticatedAgentMap.put(selfAgentContainer.getAgentName(), new AuthenticatedAgent(selfAgentContainer, calculatedTranslation.negate()));
 
                 });
@@ -72,10 +84,19 @@ public class AgentAuthentication {
     public synchronized Position translateToAgent(AgentContainer agentContainer, Position position) {
         AuthenticatedAgent authenticatedAgent = authenticatedAgentMap.get(agentContainer.getAgentName());
 
-        if(authenticatedAgent == null)
+        if (authenticatedAgent == null)
             return position;
 
         return position.subtract(authenticatedAgent.getTranslationValue());
+    }
+
+    public synchronized Position translateFromAgent(AgentContainer agentContainer, Position position) {
+        AuthenticatedAgent authenticatedAgent = authenticatedAgentMap.get(agentContainer.getAgentName());
+
+        if (authenticatedAgent == null)
+            return position;
+
+        return authenticatedAgent.getTranslationValue().subtract(position);
     }
 
     /**
@@ -100,11 +121,21 @@ public class AgentAuthentication {
     public synchronized Map<AgentContainer, Position> getAuthenticatedTeammatePositions() {
         Map<AgentContainer, Position> teammatePositions = new HashMap<>();
 
+        for (var authenticatedAgent : getAuthenticatedAgentPositions().entrySet()) {
+            teammatePositions.put(authenticatedAgent.getKey().getAgentContainer(), authenticatedAgent.getValue());
+        }
+
+        return teammatePositions;
+    }
+
+    public synchronized Map<AuthenticatedAgent, Position> getAuthenticatedAgentPositions() {
+        Map<AuthenticatedAgent, Position> teammatePositions = new HashMap<>();
+
         for (AuthenticatedAgent authenticatedAgent : getAuthenticatedAgents()) {
             Position otherAgentLocation = authenticatedAgent.getAgentContainer().getCurrentLocation();
 
             Position translationValue = authenticatedAgent.getTranslationValue();
-            teammatePositions.put(authenticatedAgent.getAgentContainer(), otherAgentLocation.add(translationValue));
+            teammatePositions.put(authenticatedAgent, otherAgentLocation.add(translationValue));
         }
 
         return teammatePositions;
@@ -118,9 +149,8 @@ public class AgentAuthentication {
         authenticatedAgentMap.values().forEach(authAgent -> mergeMapPercepts(authAgent.getAgentContainer().getAgentName(), authAgent.getAgentContainer().getAgentMap().getCurrentPercepts()));
 
         Map<AgentContainer, Position> agentPositions = getAuthenticatedTeammatePositions();
-        for(Map.Entry<AgentContainer, Position> authenticatedAgent : agentPositions.entrySet())
-        {
-            if(agentPositions.values().stream().filter(p -> p.equals(authenticatedAgent.getValue())).count() > 1)
+        for (Map.Entry<AgentContainer, Position> authenticatedAgent : agentPositions.entrySet()) {
+            if (agentPositions.values().stream().filter(p -> p.equals(authenticatedAgent.getValue())).count() > 1)
                 throw new RuntimeException("Two Agents are at the same location.");
 
         }
@@ -149,5 +179,15 @@ public class AgentAuthentication {
 
     public synchronized List<AuthenticatedAgent> getAuthenticatedAgents() {
         return new ArrayList<>(authenticatedAgentMap.values());
+    }
+
+    public AgentContainer findAgentByRelativePosition(int xAgent, int yAgent) {
+        Position absolute = this.selfAgentContainer.relativeToAbsoluteLocation(new Position(xAgent, yAgent));
+
+        for (var agentEntry : this.getAuthenticatedTeammatePositions().entrySet()) {
+            if (agentEntry.getValue().equals(absolute))
+                return agentEntry.getKey();
+        }
+        return null;
     }
 }

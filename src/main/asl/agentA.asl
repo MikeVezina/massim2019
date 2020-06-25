@@ -1,4 +1,3 @@
-{ include("reset.asl") }
 { include("common.asl") }
 { include("internal_actions.asl") }
 { include("actions/actions.asl") }
@@ -78,9 +77,25 @@ hasBeenStuck(STEP)
         ?percept::thing(X,Y,marker,DET);
         .print("Marker Percept: ", X, ", ", Y, ", ", DET).
 
++!dropAnyAttach
+    : percept::attached(X, Y) &
+      xyToDirection(X, Y, DIR)
+    <-  !detach(DIR);
+        !dropAnyAttach.
+
+-!dropAnyAttach
+    <- .print("Drop Attachments failed. Trying again."); !dropAnyAttach.
+
++!dropAnyAttach
+    <- .print("Attachments are cleared.").
+
++!startAgents
+    <-  !dropAnyAttach;
+        !achieveTasks.
+
 +percept::simStart
     <-  .df_register("collector");
-        !achieveTasks.
+        !startAgents.
 
 +!stayForever
     <-  !performAction(skip);

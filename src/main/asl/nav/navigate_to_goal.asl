@@ -1,4 +1,4 @@
-{ include("nav/nav_common.asl") } // Also includes common.asl via transitivity
+//{ include("nav/nav_common.asl") } // Also includes common.asl via transitivity
 
 closestGoalPerception(goal(X, Y)) :-
     percept::goal(X, Y) &
