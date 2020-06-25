@@ -23,8 +23,8 @@ public class AttachmentBuilder {
 
     private Set<Position> getAttachmentPerceptPositions() {
         var attachments = new HashSet<>(agentContainer.getAgentPerceptContainer().getRawAttachments());
-//        attachments.removeAll(agentContainer.getPreviouslyRemovedAttachments());
-//        attachments.addAll(agentContainer.getPreviouslyAddedAttachments());
+        attachments.removeAll(agentContainer.getPreviouslyRemovedAttachments());
+        attachments.addAll(agentContainer.getPreviouslyAddedAttachments());
         return attachments;
     }
 
@@ -63,8 +63,7 @@ public class AttachmentBuilder {
             return attachedChain;
 
         // Remove any entries that have not previously been attached to the agent by a connection with another agent.
-        if (agentContainer.getRecentConnections().isEmpty())
-        {
+        if (agentContainer.getRecentConnections().isEmpty()) {
             attachedChain.entrySet().removeIf(a -> !this.shouldKeepInChain(a.getKey(), a.getValue()));
             return attachedChain;
         }
@@ -75,7 +74,7 @@ public class AttachmentBuilder {
         boolean hasValidConnectedEntity = attachedChain.values().stream()
                 .anyMatch(this::isConnected);
 
-        if(hasValidConnectedEntity)
+        if (hasValidConnectedEntity)
             return attachedChain;
 
 
@@ -116,7 +115,8 @@ public class AttachmentBuilder {
 
     // Keeps any blocks that we just attached, or had attached in the previous step
     private boolean shouldKeepInChain(Position position, AttachedThing thing) {
-        return agentContainer.getPreviouslyAddedAttachments().contains(position) || agentContainer.getAttachedPositions().contains(position);
+        return (agentContainer.getPreviouslyAddedAttachments().contains(position) || agentContainer.getAttachedPositions().contains(position))
+                && !agentContainer.getPreviouslyRemovedAttachments().contains(position);
     }
 
     /**

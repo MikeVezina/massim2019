@@ -51,6 +51,7 @@ public class SynchronizedPerceptWatcher extends Thread {
             public void uncaughtException(Thread t, Throwable e) {
                 e.printStackTrace();
                 System.out.println("Uncaught.");
+                t.start();
             }
         });
     }

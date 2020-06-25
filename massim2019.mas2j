@@ -6,7 +6,7 @@
  * https://multiagentcontest.org/
  */
 
-MAS mAPC2018 {
+MAS mAPC2019 {
 
     infrastructure: Centralised
 	
@@ -15,7 +15,7 @@ MAS mAPC2018 {
 	//executionControl: jason.control.ExecutionControlGUI
 
 	agents:
-		agentA agentClass eis.functions.CustomAgent #3;
+		agentA [mindinspector="web(cycle,html,history)"] agentClass eis.functions.CustomAgent #3;
 		//agentOffender agentClass eis.functions.CustomAgent #5;
 	    operator;
 
