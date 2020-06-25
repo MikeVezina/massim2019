@@ -191,7 +191,7 @@ public class AgentContainer {
 
             if(agent == null)
             {
-                throw new NullPointerException("What's going on here?");
+                System.out.println("What's going on here?");
             }
 
 
