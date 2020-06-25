@@ -71,5 +71,11 @@ selfTaskAssignment(TASK, REQ)
         .print("Code Line: ", LINE);
         .print("Intended Means: ", Im);
         .print("============");
-        .wait(100); // Sleep before re-attempting
+        !forceExplore; // Sleep before re-attempting
         !!achieveTasks. // Start in separate focus
+
++!forceExplore
+    <-  .print("Attempting to explore before trying task again");
+        !explore.
+
+-!forceExplore <- .print("Failed to force explore. Attempting task anyways.").
