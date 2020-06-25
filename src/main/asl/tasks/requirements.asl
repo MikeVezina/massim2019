@@ -1,4 +1,15 @@
 
+// Drops any attachments that aren't the passed-in block.
+// Also drops if we have a chain of blocks (even if one of them is the required block)
++!dropOtherAttachments(Needed)
+    :  eis.internal.get_attached_blocks(Blocks) &
+       .length(Blocks, Sz) & Sz > 1 & // If we have more than one block attached
+       .member(attached(X, Y, block, Block), Blocks) & // Find one that can be detached
+        xyToDirection(X, Y, Dir)
+    <-  .print("Dropping multiple blocks: ",  X, Y, Block);
+        !moveOffGoal(Block);
+        !performAction(detach(Dir));
+        !dropOtherAttachments(Needed).
 
 // Check for duplicate blocks of the correct type (And drop one)
 +!dropOtherAttachments(BLOCK)

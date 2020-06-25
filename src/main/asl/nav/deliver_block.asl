@@ -39,7 +39,7 @@ isBesideAbsolute(X, Y)
         taskAssignment(SLAVE, TASK, REQ)
     <-  .print("Found Slave: ", SLAVE, ". Prev REQ: ", PREV_REQ, ". Next REQ = ", REQ);
         .send(SLAVE, tell, meetingPointSet(TASK));
-        .abolish(slaveConnect(TASK,_)[source(_)]);
+        .abolish(slaveConnect(_,_)[source(_)]);
         !prepareForConnect(SLAVE); // Allow connect actions from the slave
         !waitForConnect(SLAVE, TASK, PREV_REQ, REQ);
         !informSlaves(TASK).

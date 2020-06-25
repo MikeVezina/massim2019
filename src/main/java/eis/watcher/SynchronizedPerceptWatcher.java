@@ -43,7 +43,6 @@ public class SynchronizedPerceptWatcher extends Thread {
         usernameContainerMap = new ConcurrentHashMap<>();
 
 
-
         // Set the thread name
         setName("SynchronizedPerceptWatcherThread");
         setUncaughtExceptionHandler(new UncaughtExceptionHandler() {
@@ -56,8 +55,7 @@ public class SynchronizedPerceptWatcher extends Thread {
         });
     }
 
-    public AgentContainer getContainerByUsername(String username)
-    {
+    public AgentContainer getContainerByUsername(String username) {
         return usernameContainerMap.get(username);
     }
 
@@ -70,25 +68,24 @@ public class SynchronizedPerceptWatcher extends Thread {
         }
 
         // Hard code agent usernames (no way to get them via EI??)
-        createUser("agent-TRG1","agentA1");
-        createUser("agent-TRG2","agentA2");
-        createUser("agent-TRG3","agentA3");
-        createUser("agent-TRG4","agentA4");
-        createUser("agent-TRG5","agentA5");
-        createUser("agent-TRG6","agentA6");
-        createUser("agent-TRG7","agentA7");
-        createUser("agent-TRG8","agentA8");
-        createUser("agent-TRG9","agentA9");
-        createUser("agent-TRG10","agentA10");
+        createUser("agent-TRG1", "agentA1");
+        createUser("agent-TRG2", "agentA2");
+        createUser("agent-TRG3", "agentA3");
+        createUser("agent-TRG4", "agentA4");
+        createUser("agent-TRG5", "agentA5");
+        createUser("agent-TRG6", "agentOffender1");
+        createUser("agent-TRG7", "agentOffender2");
+        createUser("agent-TRG8", "agentOffender3");
+        createUser("agent-TRG9", "agentOffender4");
+        createUser("agent-TRG10", "agentOffender5");
 
     }
 
-    private void createUser(String username, String agentName)
-    {
-        if(!agentContainers.containsKey(agentName))
+    private void createUser(String username, String agentName) {
+        if (!agentContainers.containsKey(agentName))
             return;
 
-        usernameContainerMap.put(username,agentContainers.get(agentName));
+        usernameContainerMap.put(username, agentContainers.get(agentName));
     }
 
     @Override
@@ -196,28 +193,12 @@ public class SynchronizedPerceptWatcher extends Thread {
 
                             var next = iter.next();
                             if (next.getName().equals("thing")) {
-                                String name = "";
+                                String username = next.getParameters().get(3).toProlog();
 
-                                switch ( next.getParameters().get(3).toProlog())
-                                {
-                                    case "agent-TRG1":
-                                        name = "agentA1";
-                                        break;
-                                    case "agent-TRG2":
-                                        name = "agentA2";
-                                        break;
-                                    case "agent-TRG3":
-                                        name = "agentA3";
-                                        break;
-                                }
-
-
-                                if (!name.isBlank())
-                                {
-                                    var cont = agentContainers.get(name);
+                                if (usernameContainerMap.containsKey(username)) {
+                                    var cont = usernameContainerMap.get(username);
                                     var thing = Thing.ParseThing(next);
-                                    if(isFirst && cont.equals(a))
-                                    {
+                                    if (isFirst && cont.equals(a)) {
                                         cont.setCurrentLocation(thing.getPosition());
                                     }
                                     pos.put(cont, thing);
@@ -226,7 +207,8 @@ public class SynchronizedPerceptWatcher extends Thread {
                             }
                         }
 
-                        relPos.put(a, pos);
+                        if(!pos.isEmpty())
+                            relPos.put(a, pos);
 
 
                         try {

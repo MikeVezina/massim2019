@@ -3,6 +3,7 @@ package eis.agent;
 import eis.EISAdapter;
 import eis.iilang.Identifier;
 import eis.iilang.Percept;
+import eis.percepts.things.Thing;
 import eis.watcher.SynchronizedPerceptWatcher;
 import map.AgentMap;
 import map.Direction;
@@ -195,7 +196,7 @@ public class AgentContainer {
 
 
             var abs = this.relativeToAbsoluteLocation(new Position(xReqString, yReqString));
-            this.getAgentAuthentication().translateToAgent(agent, abs);
+            abs = this.getAgentAuthentication().translateToAgent(agent, abs);
             agent.setDisconnected(abs);
             this.removedAttachments.add(new Position(xAgent, yAgent));
 
@@ -257,10 +258,38 @@ public class AgentContainer {
             System.out.println(agentName + ": Step " + getCurrentStep() + " did not perform any movement. " + perceptContainer.getLastAction() + " + " + perceptContainer.getLastActionResult());
         }
 
-        var expected = SynchronizedPerceptWatcher.getInstance().relPos.get(this).get(this).getPosition();
-        if (!agentLocation.getCurrentLocation().equals(expected)) {
-            System.out.println("debugger");
+        var debugLocations = getDebuggingLocations();
+        if(debugLocations != null)
+        {
+            // Get our absolute location
+            var expectedThing = debugLocations.get(this);
+
+            if(expectedThing == null)
+            {
+                System.out.println("Why is our debug value null?");
+            }
+            else {
+                if (!agentLocation.getCurrentLocation().equals(expectedThing.getPosition())) {
+                    System.out.println("debugger: positions are incorrect.");
+                }
+            }
+
+
         }
+
+    }
+
+    /**
+     * Only works when debugging. Checks that our location updates are correct. Changes to the massim server need to be made to provide agents with their abs. locations.
+     * @return the hashmap of agent containers to their corresponding thing perceptions
+     */
+    Map<AgentContainer, Thing> getDebuggingLocations()
+    {
+        var perceptWatcher = SynchronizedPerceptWatcher.getInstance();
+        if(perceptWatcher.relPos != null && !perceptWatcher.relPos.isEmpty() && perceptWatcher.relPos.containsKey(this))
+            return SynchronizedPerceptWatcher.getInstance().relPos.get(this);
+
+        return null;
     }
 
     public synchronized long getCurrentStep() {

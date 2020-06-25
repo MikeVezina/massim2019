@@ -48,16 +48,16 @@ public class AgentAuthentication {
             translations.add(authenticatedAgent.getTranslationValue());
 
         }
-
-        SynchronizedPerceptWatcher.getInstance().relPos.get(this.selfAgentContainer).forEach((agent, thing) -> {
-            if (thing instanceof Entity) {
-
-                if (otherAgentContainer.getAgentName().equals(agent.getAgentName()) && !translation.equals(thing.getPosition().negate())) {
-                  //  System.out.println("TEST!");
+        var relPositions = selfAgentContainer.getDebuggingLocations();
+        if (relPositions != null) {
+            relPositions.forEach((agent, thing) -> {
+                if (thing instanceof Entity) {
+                    if (otherAgentContainer.getAgentName().equals(agent.getAgentName()) && !translation.equals(thing.getPosition().negate())) {
+                          System.out.println("Invalid auth. translation value!");
+                    }
                 }
-            }
-        });
-
+            });
+        }
         String agentName = otherAgentContainer.getAgentName();
         authenticatedAgentMap.put(agentName, new AuthenticatedAgent(otherAgentContainer, translation));
 
@@ -184,9 +184,8 @@ public class AgentAuthentication {
     public AgentContainer findAgentByRelativePosition(int xAgent, int yAgent) {
         Position absolute = this.selfAgentContainer.relativeToAbsoluteLocation(new Position(xAgent, yAgent));
 
-        for(var agentEntry : this.getAuthenticatedTeammatePositions().entrySet())
-        {
-            if(agentEntry.getValue().equals(absolute))
+        for (var agentEntry : this.getAuthenticatedTeammatePositions().entrySet()) {
+            if (agentEntry.getValue().equals(absolute))
                 return agentEntry.getKey();
         }
         return null;

@@ -48,7 +48,7 @@ public class EISAdapter extends Environment implements AgentListener {
 
 
     public EISAdapter() {
-        super(20);
+        super(1);
         singleton = this;
     }
 
