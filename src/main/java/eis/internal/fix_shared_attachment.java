@@ -28,8 +28,6 @@ public class fix_shared_attachment extends DefaultInternalAction {
     {
         if(doubleAttachMap == null)
             doubleAttachMap = new ConcurrentHashMap<>();
-
-        System.out.println();
     }
 
 

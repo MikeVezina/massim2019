@@ -49,10 +49,12 @@ public class AgentAuthentication {
 
         }
         var relPositions = selfAgentContainer.getDebuggingLocations();
+
+        // When debugging, the translation value should always be 0,0 since we are fed the true coordinate system and there is no need for translation
         if (relPositions != null) {
             relPositions.forEach((agent, thing) -> {
                 if (thing instanceof Entity) {
-                    if (otherAgentContainer.getAgentName().equals(agent.getAgentName()) && !translation.equals(thing.getPosition().negate())) {
+                    if (otherAgentContainer.getAgentName().equals(agent.getAgentName()) && !translation.equals(Position.ZERO)) {
                           System.out.println("Invalid auth. translation value!");
                     }
                 }

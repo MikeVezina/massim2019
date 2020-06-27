@@ -71,11 +71,12 @@ selfTaskAssignment(TASK, REQ)
         .print("Code Line: ", LINE);
         .print("Intended Means: ", Im);
         .print("============");
-        !forceExplore; // Sleep before re-attempting
+        !forceExploreThenAchieve. // Explore before re-attempting
+
+
++!forceExploreThenAchieve
+    <-  .print("Attempting to explore before trying task again");
+        !explore;
         !!achieveTasks. // Start in separate focus
 
-+!forceExplore
-    <-  .print("Attempting to explore before trying task again");
-        !explore.
-
--!forceExplore <- .print("Failed to force explore. Attempting task anyways.").
+-!forceExploreThenAchieve <- .print("Failed to force explore. Resetting agent goals."); !!startAgents.

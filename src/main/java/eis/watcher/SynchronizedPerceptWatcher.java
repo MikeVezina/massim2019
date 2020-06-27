@@ -49,8 +49,7 @@ public class SynchronizedPerceptWatcher extends Thread {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 e.printStackTrace();
-                System.out.println("Uncaught.");
-                t.start();
+                LOG.error("Uncaught.");
             }
         });
     }
@@ -249,7 +248,7 @@ public class SynchronizedPerceptWatcher extends Thread {
 
 
         }
-        System.out.println("SynchronizedPerceptWatcher is finished execution.");
+        LOG.info("SynchronizedPerceptWatcher is finished execution.");
     }
 
     public synchronized SharedPerceptContainer getSharedPerceptContainer() {
@@ -264,7 +263,7 @@ public class SynchronizedPerceptWatcher extends Thread {
         return sharedPerceptContainer;
     }
 
-    public Collection<AgentContainer> getAgentContainers() {
+    public synchronized Collection<AgentContainer> getAgentContainers() {
         return agentContainers.values();
     }
 }

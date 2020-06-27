@@ -93,7 +93,7 @@ isBesideAbsolute(X, Y)
 
 // Disconnect handler
 +!handleActionResult(disconnect, PARAMS, success)
-    <-  .print("(Warning): No handler for successful Action: ", ACTION).
+    <-  .print("Successfully disconnected: ", PARAMS).
 
 //+!waitForDetach(SLAVE, REQ)
 //    :    not(slaveDetached[source(SLAVE)])

@@ -16,6 +16,8 @@ import eis.percepts.containers.SharedPerceptContainer;
 import jason.asSyntax.Literal;
 import massim.protocol.messages.scenario.Actions;
 import map.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import utils.Utils;
 
 import java.util.*;
@@ -44,6 +46,8 @@ public class AgentContainer {
     private Set<Position> removedAttachments;
     private Set<Position> addedAttachments;
     private Map<AgentContainer, Position> addedConnection;
+    private final Logger LOG;
+    private Set<Position> previouslyDisconnected;
 
     public AgentContainer(String agentName) {
         this.agentName = agentName;
@@ -58,6 +62,9 @@ public class AgentContainer {
         this.addedAttachments = new HashSet<>();
         this.addedConnection = new HashMap<>();
         this.sharedAttachments = new HashMap<>();
+        this.previouslyDisconnected = new HashSet<>();
+        LOG = LoggerFactory.getLogger(agentName + "-Container");
+        LOG.info("Created container");
     }
 
     public MQSender getMqSender() {
@@ -142,6 +149,9 @@ public class AgentContainer {
         addedAttachments.clear();
         sharedAttachments.clear();
         addedConnection.clear();
+        
+        removedAttachments.addAll(previouslyDisconnected);
+        previouslyDisconnected.clear();
 
         if(!perceptContainer.getLastActionResult().equals("success"))
             return;
@@ -188,18 +198,19 @@ public class AgentContainer {
             var yAgent = Integer.parseInt(perceptContainer.getLastActionParams().get(3).toProlog());
 
             var agent = this.agentAuthentication.findAgentByRelativePosition(xAgent, yAgent);
+            this.removedAttachments.add(new Position(xAgent, yAgent));
 
             if(agent == null)
             {
-                System.out.println("What's going on here?");
+                LOG.error("What's going on here?");
+                return;
             }
 
+            LOG.info("Disconnecting from: " + agent.getAgentName());
 
             var abs = this.relativeToAbsoluteLocation(new Position(xReqString, yReqString));
             abs = this.getAgentAuthentication().translateToAgent(agent, abs);
             agent.setDisconnected(abs);
-            this.removedAttachments.add(new Position(xAgent, yAgent));
-
         }
 
     }
@@ -211,7 +222,8 @@ public class AgentContainer {
      */
     private synchronized void setDisconnected(Position abs) {
         var rel = absoluteToRelativeLocation(abs);
-        this.removedAttachments.add(rel);
+        this.previouslyDisconnected.add(rel);
+        LOG.info("Received disconnect at rel: " + rel);
     }
 
     private synchronized void checkRotation() {
