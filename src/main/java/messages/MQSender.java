@@ -1,13 +1,12 @@
 package messages;
 
 import com.rabbitmq.client.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 public class MQSender extends MQConnector {
-    private static final Logger LOG = LoggerFactory.getLogger(MQSender.class);
+    private static final Logger LOG = Logger.getLogger(MQSender.class.getName());
 
     public MQSender(String queueName) {
         super(queueName);
@@ -15,7 +14,7 @@ public class MQSender extends MQConnector {
         // Only start the MQ producer if there is a consumer waiting.
 
         if (!getChannel().isOpen()) {
-            LOG.error("Channel is not open.");
+            LOG.warning("Channel is not open.");
         } else {
 
 
@@ -45,7 +44,7 @@ public class MQSender extends MQConnector {
         try {
             getChannel().queueDelete(getQueueName());
         } catch (IOException e) {
-            LOG.error("Failed to delete queue.");
+            LOG.warning("Failed to delete queue.");
             e.printStackTrace();
         }
         super.close();

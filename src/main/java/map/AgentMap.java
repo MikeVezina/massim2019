@@ -8,18 +8,16 @@ import eis.percepts.terrain.Goal;
 import eis.percepts.terrain.Terrain;
 import eis.percepts.things.Entity;
 import eis.percepts.things.Thing;
-import eis.watcher.SynchronizedPerceptWatcher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import utils.*;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class AgentMap {
-    private static Logger LOG = LoggerFactory.getLogger(AgentMap.class.getName());
+    private static Logger LOG = Logger.getLogger(AgentMap.class.getName());
     private Graph mapKnowledge;
     private AgentContainer agentContainer;
     private Map<Position, MapPercept> currentPerceptions;
@@ -104,7 +102,7 @@ public class AgentMap {
             MapPercept mapPercept = currentPerceptions.get(absolutePos);
 
             if (mapPercept == null)
-                LOG.error("Null mapPercept. Possibly an invalid vision parameter: " + vision);
+                LOG.warning("Null mapPercept. Possibly an invalid vision parameter: " + vision);
             else
                 mapPercept.addThing(thing);
         }
@@ -114,7 +112,7 @@ public class AgentMap {
             MapPercept mapPercept = currentPerceptions.get(absolutePos);
 
             if (mapPercept == null)
-                LOG.error("Null mapPercept. Possibly an invalid vision parameter: " + vision);
+                LOG.warning("Null mapPercept. Possibly an invalid vision parameter: " + vision);
             else
                 mapPercept.setTerrain(terrain);
 

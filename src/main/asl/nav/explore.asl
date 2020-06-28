@@ -29,8 +29,7 @@ exploreDirection(DIR) :-
 
 -!explore[error(E)]
     <-  .print("Failed to explore. Trying again. ", E);
-        .wait(200);
-        !explore.
+        .fail.
 
 +!exploreForever
     <-  !explore;

@@ -10,13 +10,12 @@ import eis.percepts.containers.SharedPerceptContainer;
 import eis.percepts.things.Thing;
 import massim.eismassim.EnvironmentInterface;
 import messages.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import utils.Stopwatch;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.logging.Logger;
 
 /**
  * This class is responsible for polling agent percepts and updating the AgentContainer objects upon retrieval of new
@@ -24,7 +23,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class SynchronizedPerceptWatcher extends Thread {
 
-    private static final Logger LOG = LoggerFactory.getLogger("PerceptWatcher");
+    private static final Logger LOG = Logger.getLogger("PerceptWatcher");
     private static SynchronizedPerceptWatcher synchronizedPerceptWatcher;
 
     public Map<AgentContainer, Map<AgentContainer, Thing>> relPos = new HashMap<>();
@@ -49,7 +48,7 @@ public class SynchronizedPerceptWatcher extends Thread {
             @Override
             public void uncaughtException(Thread t, Throwable e) {
                 e.printStackTrace();
-                LOG.error("Uncaught.");
+                LOG.warning("Uncaught.");
             }
         });
     }
@@ -113,7 +112,7 @@ public class SynchronizedPerceptWatcher extends Thread {
 
     private void waitForEntityConnection(String entity) {
         while (!environmentInterface.isEntityConnected(entity)) {
-            LOG.warn("Not connected. Waiting for a connection.");
+            LOG.warning("Not connected. Waiting for a connection.");
 
             // Sleep before we try again.
             try {
@@ -236,7 +235,7 @@ public class SynchronizedPerceptWatcher extends Thread {
                     agentContainers.values().forEach(Message::createAndSendAgentContainerMessage);
 
                     if (deltaTime > 500 && agentContainers.size() > 0)
-                        LOG.warn("Step " + agentContainers.get(environmentInterface.getEntities().getFirst()).getSharedPerceptContainer().getStep() + " took " + deltaTime + " ms to process map updates and synchronization.");
+                        LOG.warning("Step " + agentContainers.get(environmentInterface.getEntities().getFirst()).getSharedPerceptContainer().getStep() + " took " + deltaTime + " ms to process map updates and synchronization.");
 
                 }
             } catch (InvalidPerceptCollectionException e) {

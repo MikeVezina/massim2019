@@ -30,9 +30,10 @@ agentUnblocked(DIR) :-
 // This should also check to see if any attachments are blocked.
 canMove(DIR)
     :-  agentUnblocked(DIR) &
+        not(hasAgentAttached) &
         attachmentsUnblocked(DIR).
 
-
+hasAgentAttached :- hasAttached(X, Y, entity, _) & .print("Has agent attached: (", X, Y, ").").
 
 
 /** Attachments Unblocked Test Goal Events (An attachment is blocked) **/

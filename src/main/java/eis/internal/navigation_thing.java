@@ -10,7 +10,6 @@ import jason.asSyntax.*;
 import map.Direction;
 import map.MapPercept;
 import map.Position;
-import org.apache.logging.log4j.util.PropertySource;
 
 import java.util.List;
 import java.util.Map;

@@ -16,11 +16,10 @@ import eis.percepts.containers.SharedPerceptContainer;
 import jason.asSyntax.Literal;
 import massim.protocol.messages.scenario.Actions;
 import map.Position;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import utils.Utils;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +62,7 @@ public class AgentContainer {
         this.addedConnection = new HashMap<>();
         this.sharedAttachments = new HashMap<>();
         this.previouslyDisconnected = new HashSet<>();
-        LOG = LoggerFactory.getLogger(agentName + "-Container");
+        LOG = Logger.getLogger(agentName);
         LOG.info("Created container");
     }
 
@@ -136,13 +135,15 @@ public class AgentContainer {
         checkRotation();
 
         updateAttachedBlocks();
-
+        LOG.info("Last Action (" + perceptContainer.getLastAction() + ") was handled");
     }
 
     /**
      * Adds the successful attach (or connection) action block to our attached blocks.
      */
     private void updateAttachedBlocks() {
+        if(!previouslyDisconnected.isEmpty())
+            LOG.info("Previously Disconnected Attachments: " + previouslyDisconnected);
 
         // Clear any previous shared or removed attachments.
         removedAttachments.clear();
@@ -202,7 +203,7 @@ public class AgentContainer {
 
             if(agent == null)
             {
-                LOG.error("What's going on here?");
+                LOG.warning("What's going on here?");
                 return;
             }
 
@@ -212,6 +213,13 @@ public class AgentContainer {
             abs = this.getAgentAuthentication().translateToAgent(agent, abs);
             agent.setDisconnected(abs);
         }
+
+        if(!addedAttachments.isEmpty())
+            LOG.info("Added Attachments: " + addedAttachments);
+        if(!removedAttachments.isEmpty())
+            LOG.info("Removed Attachments: " + removedAttachments);
+        if(!addedConnection.isEmpty())
+            LOG.info("Added Connections: " + addedConnection);
 
     }
 

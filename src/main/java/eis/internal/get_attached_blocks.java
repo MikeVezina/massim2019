@@ -35,6 +35,8 @@ public class get_attached_blocks extends DefaultInternalAction {
             attachedBlocks.add(attachedStruct);
         }
 
+        ts.getLogger().info("Attached Blocks: " + attachedBlocks.getAsList());
+
         if(attachedBlocks.isEmpty())
             return false;
 
