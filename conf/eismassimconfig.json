@@ -12,6 +12,11 @@
     {"name": "agentA2", "print-json": false, "print-iilang": false, "username": "agent-TRG2", "password": "ml7Dw2"},
     {"name": "agentA3", "print-json": false, "print-iilang": false, "username": "agent-TRG3", "password": "ml7Dw2"},
     {"name": "agentA4", "print-json": false, "print-iilang": false, "username": "agent-TRG4", "password": "ml7Dw2"},
-    {"name": "agentA5", "print-json": false, "print-iilang": false, "username": "agent-TRG5", "password": "ml7Dw2"}
+    {"name": "agentA5", "print-json": false, "print-iilang": false, "username": "agent-TRG5", "password": "ml7Dw2"},
+    {"name": "agentA6", "print-json": false, "print-iilang": false, "username": "agent-TRG6", "password": "ml7Dw2"},
+    {"name": "agentA7", "print-json": false, "print-iilang": false, "username": "agent-TRG7", "password": "ml7Dw2"},
+    {"name": "agentA8", "print-json": false, "print-iilang": false, "username": "agent-TRG8", "password": "ml7Dw2"},
+    {"name": "agentA9", "print-json": false, "print-iilang": false, "username": "agent-TRG9", "password": "ml7Dw2"},
+    {"name": "agentA10", "print-json": false, "print-iilang": false, "username": "agent-TRG10", "password": "ml7Dw2"}
   ]
 }

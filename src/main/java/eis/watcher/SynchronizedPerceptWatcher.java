@@ -71,11 +71,11 @@ public class SynchronizedPerceptWatcher extends Thread {
         createUser("agent-TRG3", "agentA3");
         createUser("agent-TRG4", "agentA4");
         createUser("agent-TRG5", "agentA5");
-        createUser("agent-TRG6", "agentOffender1");
-        createUser("agent-TRG7", "agentOffender2");
-        createUser("agent-TRG8", "agentOffender3");
-        createUser("agent-TRG9", "agentOffender4");
-        createUser("agent-TRG10", "agentOffender5");
+        createUser("agent-TRG6", "agentA6");
+        createUser("agent-TRG7", "agentA7");
+        createUser("agent-TRG8", "agentA8");
+        createUser("agent-TRG9", "agentA9");
+        createUser("agent-TRG10", "agentA10");
 
     }
 

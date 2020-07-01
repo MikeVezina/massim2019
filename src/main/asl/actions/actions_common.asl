@@ -20,12 +20,11 @@ didActionSucceed :-
 /* This is where we include action and plan failures */
 @performAction[atomic]
 +!performAction(ACTION)
-    :   percept::step(STEP) &
-        .current_intention(intention(_, Im))
+    :   percept::step(STEP)
     <-  +lastAttemptedAction(ACTION); // Remember last action in case we need to re-attempt it
 	    .print(STEP, ": Sending action: ", ACTION);
 	    .print("Action Intention: ");
-	    .print(Im);
+	    eis.internal.log_im_stack;
 	    ACTION;
 	    .wait("+percept::step(_)"); // Wait for the next simulation step
 	    ?percept::step(STEP_AFTER);
