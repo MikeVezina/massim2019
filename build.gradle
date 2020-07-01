@@ -32,4 +32,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile 'es.usc.citius.hipster:hipster-all:1.0.1'
     compile group: 'org.slick2d', name: 'slick2d-core', version: '1.0.2'
+    compile 'org.jetbrains:annotations:19.0.0'
+    compile 'org.apache.httpcomponents:httpclient:4.5.10'
 }

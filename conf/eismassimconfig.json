@@ -8,10 +8,6 @@
   "notifications": false,
   "queued": false,
   "entities": [
-    {"name": "agentA1", "print-json": false, "print-iilang": false, "username": "agent-TRG1", "password": "ml7Dw2"},
-    {"name": "agentA2", "print-json": false, "print-iilang": false, "username": "agent-TRG2", "password": "ml7Dw2"},
-    {"name": "agentA3", "print-json": false, "print-iilang": false, "username": "agent-TRG3", "password": "ml7Dw2"},
-    {"name": "agentA4", "print-json": false, "print-iilang": false, "username": "agent-TRG4", "password": "ml7Dw2"},
-    {"name": "agentA5", "print-json": false, "print-iilang": false, "username": "agent-TRG5", "password": "ml7Dw2"}
+    {"name": "agentA1", "print-json": false, "print-iilang": false, "username": "agent-TRG1", "password": "ml7Dw2"}
   ]
 }

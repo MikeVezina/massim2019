@@ -151,8 +151,36 @@ public class EISAdapter extends Environment implements AgentListener {
         // Add team mate relative perceptions
         percepts.addAll(addAuthenticatedTeammates(agName));
 
+        getEpistemicPercepts(percepts);
+
 
         return percepts;
+    }
+
+    private void getEpistemicPercepts(List<Literal> percepts) {
+//        var mapPercepts = getMapPercepts();
+//        var possibleSurroundings = getPossibleSurroundings(mapPercepts);
+//
+//        // These are the surroundings that we KNOW
+//        for (Percept percept : mapPercepts.getPercepts()) {
+//            percepts.add(ASSyntax.createLiteral("location", ASSyntax.createNumber(percept.position.getFirst()), ASSyntax.createNumber(percept.position.getSecond()), percept.item.item));
+//        }
+//
+//        // Better way to represent possibility here rather than inverse of set?
+//        for (var surroundingEntry : possibleSurroundings.entrySet()) {
+//            var location = surroundingEntry.getKey();
+//            var possiblePercepts = surroundingEntry.getValue();
+//            var possibleItems = new ArrayList<Percept.Item>();
+//            possiblePercepts.forEach(per -> possibleItems.add(per.item));
+//
+//            // We use the inverted set to negate the impossible items
+//            var invSet = new HashSet<>(Percept.Item.valueSet());
+//            invSet.removeAll(possibleItems);
+//
+//            for(Percept.Item item : invSet) {
+//                percepts.add(ASSyntax.createLiteral("location", ASSyntax.createNumber(location.getFirst()), ASSyntax.createNumber(location.getSecond()), item.item).setNegated(Literal.LNeg));
+//            }
+//        }
     }
 
 
