@@ -1,7 +1,6 @@
 package eis;
 
 import eis.watcher.SynchronizedPerceptWatcher;
-import jason.infra.centralised.RunCentralisedMAS;
 import jason.runtime.RuntimeServices;
 import map.AgentMap;
 import map.MapPercept;
@@ -18,12 +17,7 @@ import utils.LiteralUtils;
 import map.Position;
 import utils.Utils;
 
-import javax.management.MBeanServer;
-import javax.management.MBeanServerBuilder;
-import java.lang.management.ManagementFactory;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -45,6 +39,9 @@ public class EISAdapter extends Environment implements AgentListener {
     private EnvironmentInterface ei;
     private SynchronizedPerceptWatcher perceptWatcher;
 
+    public static Atom NONE = ASSyntax.createAtom("none");
+    public static Atom BLOCK_ONE = ASSyntax.createAtom("block_one");
+    public static Atom BLOCK_TWO = ASSyntax.createAtom("block_two");
 
 
     public EISAdapter() {
@@ -112,7 +109,7 @@ public class EISAdapter extends Environment implements AgentListener {
 
         clearPercepts(agName);
 
-        if(agName.equals("df"))
+        if (agName.equals("df"))
             return percepts;
 
         // The operator should rely on it's own beliefs and internal actions.
@@ -127,9 +124,7 @@ public class EISAdapter extends Environment implements AgentListener {
             throw new RuntimeException("Failed to get agent container for: " + agName);
 
 
-
-        for(Position position : agentContainer.getAttachedPositions())
-        {
+        for (Position position : agentContainer.getAttachedPositions()) {
             percepts.add(ASSyntax.createLiteral(PERCEPT_NAMESPACE_ATOM, "betterAttach", new NumberTermImpl(position.getX()), new NumberTermImpl(position.getY())));
         }
 
@@ -151,22 +146,57 @@ public class EISAdapter extends Environment implements AgentListener {
         // Add team mate relative perceptions
         percepts.addAll(addAuthenticatedTeammates(agName));
 
-        getEpistemicPercepts(percepts);
+        getEpistemicLocPercepts(agentContainer,percepts);
+        //getEpistemicPercepts(agentContainer, percepts);
 
 
         return percepts;
     }
+    private void getEpistemicLocPercepts(AgentContainer container, List<Literal> percepts) {
 
-    private void getEpistemicPercepts(List<Literal> percepts) {
-//        var mapPercepts = getMapPercepts();
-//        var possibleSurroundings = getPossibleSurroundings(mapPercepts);
-//
-//        // These are the surroundings that we KNOW
-//        for (Percept percept : mapPercepts.getPercepts()) {
-//            percepts.add(ASSyntax.createLiteral("location", ASSyntax.createNumber(percept.position.getFirst()), ASSyntax.createNumber(percept.position.getSecond()), percept.item.item));
-//        }
-//
-//        // Better way to represent possibility here rather than inverse of set?
+
+        var mapPercepts = getMapPercepts(container, Set.of(
+                new Position(0, 1),
+                new Position(0, -1),
+                new Position(1, 0),
+                new Position(-1, 0)
+        ));
+        var possibleSurroundings = getPossibleSurroundings(container, mapPercepts, Set.of(
+                new Position(1, 1)
+        ));
+
+        // These are the surroundings that we KNOW
+        for (var perceptEntry : possibleSurroundings.entrySet()) {
+            Position relative = perceptEntry.getKey();
+            var perceptMap = perceptEntry.getValue();
+
+            // Do not add self
+            if(relative.isZeroPosition())
+                continue;
+
+            Set<Atom> possibleAtoms = new HashSet<>();
+
+
+            // Impossibilities -> Right now we only look at block or no block
+            Set<Atom> notPossibleAtoms = new HashSet<>();
+            notPossibleAtoms.add(BLOCK_ONE);
+            notPossibleAtoms.add(BLOCK_TWO);
+            notPossibleAtoms.add(NONE);
+
+            for(MapPercept percept : perceptMap.values())
+            {
+                if(percept.hasBlock())
+                    possibleAtoms.add(percept.getBlock().getDetails().equals("b0") ? BLOCK_ONE : BLOCK_TWO);
+                else
+                    possibleAtoms.add(NONE);
+            }
+
+            notPossibleAtoms.removeAll(possibleAtoms);
+
+//            for(Atom possible : notPossibleAtoms)
+//                percepts.add(ASSyntax.createLiteral(LiteralImpl.LNeg, "location", ASSyntax.createNumber(relative.getX()), ASSyntax.createNumber(relative.getY()), possible));
+        }
+        // Better way to represent possibility here rather than inverse of set?
 //        for (var surroundingEntry : possibleSurroundings.entrySet()) {
 //            var location = surroundingEntry.getKey();
 //            var possiblePercepts = surroundingEntry.getValue();
@@ -181,6 +211,122 @@ public class EISAdapter extends Environment implements AgentListener {
 //                percepts.add(ASSyntax.createLiteral("location", ASSyntax.createNumber(location.getFirst()), ASSyntax.createNumber(location.getSecond()), item.item).setNegated(Literal.LNeg));
 //            }
 //        }
+    }
+
+    private void getEpistemicPercepts(AgentContainer container, List<Literal> percepts) {
+        var mapPercepts = getMapPercepts(container, Set.of(
+                new Position(0, 1),
+                new Position(0, -1),
+                new Position(1, 0),
+                new Position(-1, 0)
+        ));
+        var possibleSurroundings = getPossibleSurroundings(container, mapPercepts, Set.of(
+                new Position(1, 1)
+        ));
+
+        // These are the surroundings that we KNOW
+        for (var perceptEntry : possibleSurroundings.entrySet()) {
+            Position relative = perceptEntry.getKey();
+            var perceptMap = perceptEntry.getValue();
+
+            // Do not add self
+            if(relative.isZeroPosition())
+                continue;
+
+            Set<Atom> possibleAtoms = new HashSet<>();
+
+
+            // Impossibilities -> Right now we only look at block or no block
+            Set<Atom> notPossibleAtoms = new HashSet<>();
+            notPossibleAtoms.add(BLOCK_ONE);
+            notPossibleAtoms.add(BLOCK_TWO);
+            notPossibleAtoms.add(NONE);
+
+            for(MapPercept percept : perceptMap.values())
+            {
+                if(percept.hasBlock())
+                    possibleAtoms.add(percept.getBlock().getDetails().equals("b0") ? BLOCK_ONE : BLOCK_TWO);
+                else
+                    possibleAtoms.add(NONE);
+            }
+
+            notPossibleAtoms.removeAll(possibleAtoms);
+
+//            for(Atom possible : notPossibleAtoms)
+//                percepts.add(ASSyntax.createLiteral(LiteralImpl.LNeg, "location", ASSyntax.createNumber(relative.getX()), ASSyntax.createNumber(relative.getY()), possible));
+        }
+        // Better way to represent possibility here rather than inverse of set?
+//        for (var surroundingEntry : possibleSurroundings.entrySet()) {
+//            var location = surroundingEntry.getKey();
+//            var possiblePercepts = surroundingEntry.getValue();
+//            var possibleItems = new ArrayList<Percept.Item>();
+//            possiblePercepts.forEach(per -> possibleItems.add(per.item));
+//
+//            // We use the inverted set to negate the impossible items
+//            var invSet = new HashSet<>(Percept.Item.valueSet());
+//            invSet.removeAll(possibleItems);
+//
+//            for(Percept.Item item : invSet) {
+//                percepts.add(ASSyntax.createLiteral("location", ASSyntax.createNumber(location.getFirst()), ASSyntax.createNumber(location.getSecond()), item.item).setNegated(Literal.LNeg));
+//            }
+//        }
+    }
+
+    /**
+     * Gets surrounding percepts.
+     *
+     * @param container
+     * @return
+     */
+    private Map<Position, MapPercept> getMapPercepts(AgentContainer container, Set<Position> positions) {
+        // Add fake map percepts
+        addFakePercepts(container);
+
+
+        // Filter non-self percepts
+        return container.getAgentMap().getCurrentStepChunks().stream()
+                // Filter out self perception
+                .filter(mapPercept -> positions.contains(container.absoluteToRelativeLocation(mapPercept.getLocation())))
+
+                // Create map from perception
+                .collect(Collectors.toMap(mapPercept -> container.absoluteToRelativeLocation(mapPercept.getLocation()), mapPercept -> mapPercept));
+    }
+
+    private void addFakePercepts(AgentContainer container) {
+
+    }
+
+    // {Rel Position -> {Abs Position -> Percept}}
+    private Map<Position, Map<Position, MapPercept>> getPossibleSurroundings(AgentContainer container, Map<Position, MapPercept> mapPercepts, Set<Position> possiblePos) {
+        // Find all chunks in map that match the list of percepts
+        Map<Position, Map<Position, MapPercept>> possibleSurroundings = new HashMap<>();
+
+        for (Position position : container.getAgentMap().findMatchingPerceptions(mapPercepts)) {
+            for (Position relPos : possiblePos) {
+                if (!possibleSurroundings.containsKey(relPos))
+                    possibleSurroundings.put(relPos, new HashMap<>());
+
+                var posSurr = possibleSurroundings.get(relPos);
+
+                Position calc = relPos.add(position);
+                Position relCalc = container.absoluteToRelativeLocation(calc);
+
+                if(mapPercepts.containsKey(relCalc))
+                    continue;
+
+                MapPercept percept = container.getAgentMap().getMapPercept(calc);
+
+                // Percept is null
+                if (percept == null)
+                    continue;
+
+                posSurr.put(calc, percept);
+            }
+        }
+
+        possibleSurroundings.entrySet().removeIf(e -> e.getValue().isEmpty());
+
+        return possibleSurroundings;
     }
 
 
@@ -284,7 +430,7 @@ public class EISAdapter extends Environment implements AgentListener {
 
         try {
             String newAg = runtimeServices.createAgent(operator, "operator.asl", null, null, null, null, null);
-            if(!newAg.equals(operator))
+            if (!newAg.equals(operator))
                 throw new NullPointerException();
         } catch (Exception e) {
             e.printStackTrace();
@@ -341,20 +487,18 @@ public class EISAdapter extends Environment implements AgentListener {
             AgentContainer ent = getAgentContainer(agName);
             Position relativePos = null;
 
-            if(action.getArity() == 1) {
+            if (action.getArity() == 1) {
                 Literal dirLiteral = (Literal) action.getTerm(0);
                 Direction dir = Utils.DirectionStringToDirection(dirLiteral.getFunctor());
 
-                if(dir == null)
+                if (dir == null)
                     return false;
 
                 relativePos = dir.getPosition();
-            }
-            else if(action.getArity() == 2)
-            {
+            } else if (action.getArity() == 2) {
 
-                int x = LiteralUtils.GetNumberParameter(action,0).intValue();
-                int y = LiteralUtils.GetNumberParameter(action,1).intValue();
+                int x = LiteralUtils.GetNumberParameter(action, 0).intValue();
+                int y = LiteralUtils.GetNumberParameter(action, 1).intValue();
                 relativePos = new Position(x, y);
             }
 
@@ -368,7 +512,7 @@ public class EISAdapter extends Environment implements AgentListener {
             if (block == null)
                 return false;
 
-         //   ent.attachBlock(relativePos);
+            //   ent.attachBlock(relativePos);
 
             return true;
         }

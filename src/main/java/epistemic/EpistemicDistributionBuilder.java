@@ -4,7 +4,9 @@ import epistemic.agent.EpistemicAgent;
 import epistemic.wrappers.WrappedLiteral;
 import jason.asSemantics.Unifier;
 import jason.asSyntax.*;
+import org.apache.commons.lang.time.StopWatch;
 import org.jetbrains.annotations.NotNull;
+import utils.Stopwatch;
 
 import java.util.*;
 import java.util.function.Function;
@@ -33,7 +35,7 @@ public class EpistemicDistributionBuilder {
         this.isValidLiterals = new ArrayList<>();
 
         var managedWorlds = processDistribution();
-        System.out.println(managedWorlds.toString());
+//        System.out.println(managedWorlds.toString());
 
         return new EpistemicDistribution(this.epistemicAgent, managedWorlds);
     }
@@ -199,12 +201,22 @@ public class EpistemicDistributionBuilder {
      */
     protected ManagedWorlds generateWorlds(Map<WrappedLiteral, LinkedList<Literal>> allPropositionsMap) {
 
+        // Calculate total number of worlds to generate
+        long worldCount = 1;
+        for(var list : allPropositionsMap.values())
+            worldCount *= list.isEmpty() ? 1 : list.size();
+
+
+        System.out.println("Generating " + worldCount + " worlds");
+        long oneFifth = worldCount / 5;
+
         // Create a blank world. Add it to a list.
         World firstWorld = new World();
         List<World> allWorlds = new LinkedList<>();
 
         allWorlds.add(firstWorld);
 
+        Stopwatch generationWatch = Stopwatch.startTiming();
 
         // Go through each key in the map (aka all literals that go into each world):
         //    For all worlds in the list:
@@ -237,15 +249,28 @@ public class EpistemicDistributionBuilder {
                     Proposition newProp = new Proposition(curIndicator, new WrappedLiteral(val));
                     nextWorld.putProposition(newProp);
 
-                    if (!allWorlds.contains(nextWorld))
+                    if (!allWorlds.contains(nextWorld)) {
                         worldIterator.add(nextWorld);
+                        if (allWorlds.size() % oneFifth == 0  && allWorlds.size() < worldCount)
+                            System.out.println("Generated: (" + allWorlds.size() + "/" + worldCount + ")");
+                    }
 
                 }
             }
+            System.out.println("Generated: (" + allWorlds.size() + "/" + worldCount + ")");
         }
 
+        long nsTime = generationWatch.stop();
+        System.out.println("World generation took " + nsTime + "(" + (nsTime/1000000) + " ms)");
+
+        Stopwatch filterWatch = Stopwatch.startTiming();
         // Only keep the worlds that are valid.
-        return allWorlds.stream().filter(this::filterValidWorlds).collect(ManagedWorlds.WorldCollector(epistemicAgent));
+        try {
+            return allWorlds.stream().filter(this::filterValidWorlds).collect(ManagedWorlds.WorldCollector(epistemicAgent));
+        } finally {
+            long filterNs = filterWatch.stop();
+            System.out.println("World filtering took " + filterNs + "(" + (filterNs/1000000) + " ms)");
+        }
     }
 
     /**

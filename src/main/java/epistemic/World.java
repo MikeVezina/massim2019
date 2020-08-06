@@ -197,7 +197,7 @@ public class World {
         int propIndex = 0;
         // The hash code of the world should be values only (entries causes collisions due to key being repeated in value prop)
         for(var prop : propositionMap.values())
-            hash ^= prop.getValue().hashCode() * (hash + propIndex++);
+            hash += prop.hashCode() * (hash + propIndex++);
 
         return hash;
     }

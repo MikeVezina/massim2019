@@ -46,7 +46,7 @@ public class ReasonerSDK {
         JsonObject managedJson = new JsonObject();
         managedJson.add("initialModel", ManagedWorldsToJson(managedWorlds));
 
-        System.out.println(managedJson.toString());
+//        System.out.println(managedJson.toString());
 
         var request = RequestBuilder
                 .post(CREATE_MODEL_URI)
@@ -211,6 +211,8 @@ public class ReasonerSDK {
             edgesArray.addAll(CreateEdges(world));
 
         }
+
+        System.out.println("Total of " + hashed.size() + " worlds");
 
         modelObject.add("worlds", worldsArray);
 

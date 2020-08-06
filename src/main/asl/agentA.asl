@@ -51,19 +51,19 @@ hasBeenStuck(STEP)
 +percept::score(SCORE)
     <-  .print("New Score: ", SCORE).
 
-@contained_agent[atomic]
-+percept::step(STEP)
-    :   eis.internal.is_agent_contained(X, Y) &
-        hasBeenStuck(STEP)
-    <-  +stuck(STEP);
-        .drop_all_intentions;
-        !!breakOut(X, Y).
+//@contained_agent[atomic]
+//+percept::step(STEP)
+//    :   eis.internal.is_agent_contained(X, Y) &
+//        hasBeenStuck(STEP)
+//    <-  +stuck(STEP);
+//        .drop_all_intentions;
+//        !!breakOut(X, Y).
 
-@contained_agent_increment[atomic]
-+percept::step(STEP)
-    :   eis.internal.is_agent_contained(X, Y) &
-        not(hasBeenStuck(STEP))
-    <-  +stuck(STEP).
+//@contained_agent_increment[atomic]
+//+percept::step(STEP)
+//    :   eis.internal.is_agent_contained(X, Y) &
+//        not(hasBeenStuck(STEP))
+//    <-  +stuck(STEP).
 
 +!breakOut(X, Y)
     <-  !clear(X, Y);

@@ -65,6 +65,86 @@ public class AgentMap {
         return currentPerceptions;
     }
 
+    public synchronized Set<Position> findMatchingPerceptions(Map<Position, MapPercept> relativePerceptions)
+    {
+        // Measure positions relative to a block (if possible)
+        Position refPoint = null;
+        boolean isBlock = false;
+
+        // Find a block
+        for(var entry : relativePerceptions.entrySet())
+        {
+            Position relPos = entry.getKey();
+            MapPercept val = entry.getValue();
+
+            if(refPoint == null || val.hasBlock())
+            {
+                refPoint = relPos;
+                isBlock = val.hasBlock();
+            }
+        }
+
+        if(refPoint == null)
+            return new HashSet<>();
+
+        // Measure all positions relative to ref point
+        Map<Position, MapPercept> refPositions = new HashMap<>();
+
+        // Put into refPositions map with calculated position
+        for(var entry : relativePerceptions.entrySet()) {
+            Position relPos = entry.getKey();
+            MapPercept val = entry.getValue();
+
+            Position calcPos = relPos.subtract(refPoint);
+
+            // Do not use ref point
+            if(calcPos.isZeroPosition())
+                continue;
+
+            refPositions.put(calcPos, val);
+        }
+
+        Iterator<Position> positionsIterate = getMapGraph().vertices().iterator();
+
+
+        // Search through cached things if a block was found
+        if(isBlock)
+            positionsIterate = getMapGraph().getCache().getCachedThingList().stream().filter(MapPercept::hasBlock).map(MapPercept::getLocation).collect(Collectors.toList()).iterator();
+
+        Set<Position> originPositions = new HashSet<>();
+
+        boolean finalIsBlock = isBlock;
+        Position finalRefPoint = refPoint;
+
+        positionsIterate.forEachRemaining(absPos -> {
+            MapPercept percept = getMapGraph().get(absPos);
+
+            if(percept == null)
+                return;
+
+            if(finalIsBlock != percept.hasBlock())
+                return;
+
+            // Ensure relative blocks match expected hasBlock
+            for(var refEntry : refPositions.entrySet())
+            {
+                Position referencePos = refEntry.getKey();
+                boolean hasBlock = refEntry.getValue().hasBlock();
+
+                var refPer = getMapGraph().get(absPos.add(referencePos));
+
+                if(refPer == null || refPer.hasBlock() != hasBlock)
+                    return;
+            }
+
+            // Add origin position by subtracting the ref point from the current absolute position
+            originPositions.add(absPos.subtract(finalRefPoint));
+
+        });
+
+        return originPositions;
+    }
+
     public synchronized void updateMap() {
         // Clear list for new percepts.
         currentPerceptions.clear();
