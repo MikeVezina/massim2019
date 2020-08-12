@@ -51,8 +51,14 @@ public class EpistemicDistributionBuilder {
         // Generate the map of literal enumerations
         var literalMap = generateLiteralEnumerations(filteredLiterals);
 
+        // Calculate total number of worlds to generate
+        long worldCount = 1;
+        for(var list : literalMap.values())
+            worldCount *= list.isEmpty() ? 1 : list.size();
+
+
         // Create the distribution of worlds
-        return generateWorlds(literalMap);
+         return generateWorlds(literalMap);
     }
 
     private Boolean nsFilter(Literal literal) {
@@ -127,7 +133,7 @@ public class EpistemicDistributionBuilder {
      * @param rule The rule to expand.
      * @return A List of ground literals.
      */
-    protected LinkedList<Literal> expandRule(Rule rule) {
+    protected HashSet<Literal> expandRule(Rule rule) {
         // Obtain the head and body of the rule
         Literal ruleHead = rule.getHead();
         LogicalFormula ruleBody = rule.getBody();
@@ -136,7 +142,7 @@ public class EpistemicDistributionBuilder {
         Iterator<Unifier> unifIterator = ruleBody.logicalConsequence(this.epistemicAgent, new Unifier());
 
         // Set up a list of expanded literals
-        LinkedList<Literal> expandedLiterals = new LinkedList<>();
+        HashSet<Literal> expandedLiterals = new HashSet<>();
 
         // Unify each valid unification with the plan head and add it to the belief base.
         while (unifIterator.hasNext()) {
@@ -169,14 +175,14 @@ public class EpistemicDistributionBuilder {
      * @param propLiterals The list of literals (rules and beliefs) marked with [prop]
      * @return A Mapping of original literal to a list of possible enumerations.
      */
-    protected Map<WrappedLiteral, LinkedList<Literal>> generateLiteralEnumerations(List<Literal> propLiterals) {
-        Map<WrappedLiteral, LinkedList<Literal>> literalMap = new HashMap<>();
+    protected LinkedHashMap<WrappedLiteral, Set<Literal>> generateLiteralEnumerations(List<Literal> propLiterals) {
+        LinkedHashMap<WrappedLiteral, Set<Literal>> literalMap = new LinkedHashMap<>();
 
         for (Literal lit : propLiterals) {
             // Right now, we are only handling rules, but we can eventually extend support for beliefs
             if (lit.isRule()) {
                 // Expand the rule into possible enumerations
-                LinkedList<Literal> expandedLiterals = expandRule((Rule) lit);
+                HashSet<Literal> expandedLiterals = expandRule((Rule) lit);
 
                 // Put the enumerations into the mapping, with the original rule as the key
                 var wrappedKey = new WrappedLiteral(lit);
@@ -199,7 +205,7 @@ public class EpistemicDistributionBuilder {
      * @param allPropositionsMap This is a mapping of all literals (which are used to create the propositions used in each of the worlds)
      * @return A List of Valid worlds
      */
-    protected ManagedWorlds generateWorlds(Map<WrappedLiteral, LinkedList<Literal>> allPropositionsMap) {
+    protected ManagedWorlds generateWorlds(LinkedHashMap<WrappedLiteral, Set<Literal>> allPropositionsMap) {
 
         // Calculate total number of worlds to generate
         long worldCount = 1;
@@ -208,69 +214,75 @@ public class EpistemicDistributionBuilder {
 
 
         System.out.println("Generating " + worldCount + " worlds");
-        long oneFifth = worldCount / 5;
-
-        // Create a blank world. Add it to a list.
-        World firstWorld = new World();
-        List<World> allWorlds = new LinkedList<>();
-
-        allWorlds.add(firstWorld);
-
         Stopwatch generationWatch = Stopwatch.startTiming();
 
-        // Go through each key in the map (aka all literals that go into each world):
-        //    For all worlds in the list:
-        //      If the world does not contain the predicate indicator, then
-        //        Clone the world for each possible value in map for key.
-        //      Add each value to their own separate worlds
-        //      Add each cloned world to the list.
+        // Use backtracking to generate all worlds.
+        Set<World> allWorlds = backtrackAllPropositions(new World(), allPropositionsMap);
 
-        // Iterate all "predicates". Each world should have one of the enumeration values from each key.
-        for (Map.Entry<WrappedLiteral, LinkedList<Literal>> predEntry : allPropositionsMap.entrySet()) {
-            WrappedLiteral curIndicator = predEntry.getKey();
-            LinkedList<Literal> allLiteralValues = predEntry.getValue();
-
-            // Iterate list of current worlds
-            ListIterator<World> worldIterator = allWorlds.listIterator();
-
-            while (worldIterator.hasNext()) {
-                World world = worldIterator.next();
-
-                // Add one possible enumeration value to the world,
-                // cloning the world if there already exists a value for the current key.
-                for (Literal val : allLiteralValues) {
-                    World nextWorld = world;
-
-                    // Clone the world if we already have a value in this world.
-                    if (world.containsKey(curIndicator)) {
-                        nextWorld = world.clone();
-                    }
-
-                    Proposition newProp = new Proposition(curIndicator, new WrappedLiteral(val));
-                    nextWorld.putProposition(newProp);
-
-                    if (!allWorlds.contains(nextWorld)) {
-                        worldIterator.add(nextWorld);
-                        if (allWorlds.size() % oneFifth == 0  && allWorlds.size() < worldCount)
-                            System.out.println("Generated: (" + allWorlds.size() + "/" + worldCount + ")");
-                    }
-
-                }
-            }
-            System.out.println("Generated: (" + allWorlds.size() + "/" + worldCount + ")");
-        }
-
-        long nsTime = generationWatch.stop();
-        System.out.println("World generation took " + nsTime + "(" + (nsTime/1000000) + " ms)");
+        long msTime = generationWatch.stopMS();
+        System.out.println("Generated " + allWorlds.size() + " worlds in " + msTime + " ms");
 
         Stopwatch filterWatch = Stopwatch.startTiming();
         // Only keep the worlds that are valid.
         try {
             return allWorlds.stream().filter(this::filterValidWorlds).collect(ManagedWorlds.WorldCollector(epistemicAgent));
         } finally {
-            long filterNs = filterWatch.stop();
-            System.out.println("World filtering took " + filterNs + "(" + (filterNs/1000000) + " ms)");
+            long filterMs = filterWatch.stopMS();
+            System.out.println("World filtering took " + filterMs + "ms");
         }
+    }
+
+    /**
+     * Generates all possible worlds from each proposition mapping. A LinkedHashMap is required here for the propositions as it allows
+     * us to guarantee that the ordering of the keys will be consistent and predictable when iterating through
+     * the map within each call of this function.
+     *
+     * This function takes in a world, finds the next available proposition, clones the world for each possible proposition value and recurses on
+     * the cloned worlds. When there are no more available propositions, this means that the passed-in world is fully built and does not require any
+     * further building. We then return all fully-built worlds.
+     *
+     * @param currentWorld the current world being built.
+     * @param allPropositionsMap
+     * @return
+     */
+    private Set<World> backtrackAllPropositions(World currentWorld, LinkedHashMap<WrappedLiteral, Set<Literal>> allPropositionsMap)
+    {
+        Set<World> allWorlds = new HashSet<>();
+
+        WrappedLiteral nextAvailableKey = null;
+
+        // Finds the first proposition key that doesn't exist in the world
+        for(var propKey : allPropositionsMap.keySet())
+        {
+            if(!currentWorld.containsKey(propKey))
+            {
+                nextAvailableKey = propKey;
+                break;
+            }
+        }
+
+        // No more keys to iterate
+        if(nextAvailableKey == null)
+            return allWorlds;
+
+        for(Literal val : allPropositionsMap.get(nextAvailableKey))
+        {
+            World cloned = currentWorld.clone();
+            cloned.putLiteral(nextAvailableKey,val);
+
+            // Iterate next literal key
+            var result = backtrackAllPropositions(cloned,allPropositionsMap);
+
+            // Return the result if the set is not empty
+            if (!result.isEmpty())
+                allWorlds.addAll(result);
+            else
+                // otherwise add our cloned world to the set.
+                allWorlds.add(cloned);
+
+        }
+
+        return allWorlds;
     }
 
     /**

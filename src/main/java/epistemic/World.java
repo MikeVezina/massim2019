@@ -5,10 +5,7 @@ import jason.asSyntax.Literal;
 import epistemic.wrappers.WrappedLiteral;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 
 /**
@@ -197,7 +194,7 @@ public class World {
         int propIndex = 0;
         // The hash code of the world should be values only (entries causes collisions due to key being repeated in value prop)
         for(var prop : propositionMap.values())
-            hash += prop.hashCode() * (hash + propIndex++);
+            hash = 31 * hash + prop.hashCode();
 
         return hash;
     }

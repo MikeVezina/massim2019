@@ -139,10 +139,10 @@ public class AgentMap {
 
             // Add origin position by subtracting the ref point from the current absolute position
             originPositions.add(absPos.subtract(finalRefPoint));
-
         });
 
         return originPositions;
+//        return originPositions; // return center of percepts
     }
 
     public synchronized void updateMap() {

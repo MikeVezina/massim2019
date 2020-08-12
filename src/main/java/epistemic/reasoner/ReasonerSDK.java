@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import epistemic.Proposition;
 import epistemic.formula.EpistemicFormula;
 import epistemic.wrappers.WrappedLiteral;
 import epistemic.ManagedWorlds;
@@ -199,18 +200,58 @@ public class ReasonerSDK {
         JsonArray edgesArray = new JsonArray();
 
         Map<Integer, World> hashed = new HashMap<>();
+        Map<Integer, List<World>> collisions = new HashMap<>();
 
         for (World world : managedWorlds) {
-            if (hashed.containsKey(world.hashCode())) {
-                var oldW = hashed.get(world.hashCode());
-                throw new RuntimeException("Hashing collision. The worlds: " + oldW + " and " + world + " have then same hash but are not equal.");
-            }
+            if (!collisions.containsKey(world.hashCode()))
+                collisions.put(world.hashCode(), new ArrayList<>());
 
+            collisions.get(world.hashCode()).add(world);
             hashed.put(world.hashCode(), world);
             worldsArray.add(WorldToJson(world));
             edgesArray.addAll(CreateEdges(world));
+        }
+
+        int totalCollisions = 0;
+
+        var iter = collisions.entrySet().iterator();
+        while (iter.hasNext())
+        {
+            var ent = iter.next();
+            if(ent.getValue().size() > 1)
+            {
+                System.out.println("Collisions: " + ent.getValue());
+                totalCollisions += ent.getValue().size() - 1;
+            }
+            else
+                iter.remove();
+        }
+        if(totalCollisions > 0) {
+            System.out.println("Total Collisions: " + totalCollisions);
+            List<World> col = (List<World>) collisions.values().toArray()[0];
+            World one = col.get(0);
+            World two = col.get(1);
+
+            List<Proposition> inter = new ArrayList<>();
+            inter.addAll(one.valueSet());
+            inter.retainAll(two.valueSet());
+
+            List<Proposition> diff = new ArrayList<>();
+            diff.addAll(one.valueSet());
+            diff.addAll(two.valueSet());
+            diff.removeAll(inter);
+
+            var propOne = diff.get(0).getValue();
+            var propTwo = diff.get(1).getValue();
+
+            propOne.hashCode();
+            propTwo.hashCode();
+
+            System.out.println(diff);
+
 
         }
+
 
         System.out.println("Total of " + hashed.size() + " worlds");
 
